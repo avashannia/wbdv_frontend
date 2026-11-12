@@ -82,6 +82,12 @@ UI",
   line-height: 1.5;
   overflow-x: hidden;
 }
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 a {
   color: inherit;
 }
