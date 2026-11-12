@@ -38,7 +38,7 @@
   </nav>
   <div class="hr"><button class="pill g" data-open="quote">Get a Quote</button><br>Quality garments, bulk orders and custom uniforms for schools, companies and teams.</div>
   <div class="fab"><span>Spring Collection</span><div class="ph" data-p="fabric photo"></div><span>New Arrivals</span></div>
-  <div class="wm"><img src="logo.png" alt="CSSP logo"><h1 aria-label="CSSP"><span>C</span><span>S</span><span>S</span><span>P</span></h1></div>
+  <div class="wm"><img src="assets/logo.png" alt="CSSP logo"><h1 aria-label="CSSP"><span>C</span><span>S</span><span>S</span><span>P</span></h1></div>
 </header>
 
 <div class="mq" aria-hidden="true"><div>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em></div></div>
@@ -110,13 +110,13 @@
 </section>
 
 <section class="cta deep" id="contact">
-  <img src="logo.png" alt="CSSP logo">
+  <img src="assets/logo.png" alt="CSSP logo">
   <div class="lbl">[ Ready to order? ]</div>
   <h2>Outfit your team, start to finish.</h2>
   <a class="pill g" href="mailto:hello@example.com">Get a free quote</a>
 </section>
 <div class="deep" id="site-footer"><div class="fo"><span>2026 · CSSP Garments Trading</span><span>hello@example.com · +63 900 000 0000</span></div>
-<div class="fw" aria-hidden="true"><img src="logo.png" alt="CSSP logo"><h1><span>C</span><span>S</span><span>S</span><span>P</span></h1></div></div>
+<div class="fw" aria-hidden="true"><img src="assets/logo.png" alt="CSSP logo"><h1><span>C</span><span>S</span><span>S</span><span>P</span></h1></div></div>
 <div class="fabs">
   <button class="fb" id="toTop" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
   <div class="share" id="share"><div class="sl2">
