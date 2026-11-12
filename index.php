@@ -119,11 +119,7 @@
 <div class="fw" aria-hidden="true"><img src="assets/logo.png" alt="CSSP logo"><h1><span>C</span><span>S</span><span>S</span><span>P</span></h1></div></div>
 <div class="fabs">
   <button class="fb" id="toTop" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
-  <div class="share" id="share"><div class="sl2">
-    <a href="tel:+639000000000" data-tip="+63 900 000 0000" aria-label="Telephone"><i class="fa-solid fa-phone"></i></a>
-    <a href="mailto:hello@example.com" data-tip="hello@example.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-    <a href="tel:+6328000000" data-tip="Hotline: (02) 8000 0000" aria-label="Hotline"><i class="fa-solid fa-headset"></i></a></div>
-    <button class="fb" id="shareBtn" aria-label="Contact options" aria-expanded="false"><i class="fa-solid fa-share-nodes"></i></button></div>
+  <a class="fb contact-link" href="tel:+639000000000" aria-label="Call CSSP"><i class="fa-solid fa-phone"></i></a>
 </div>
 <aside class="drawer" id="drawer" aria-label="Cart"><h3>Your cart</h3><div id="cartList"></div><div class="tot"><span>Total</span><span id="cartTot"></span></div><button class="pill g" data-open="quote">Request a Quote</button><button class="pill" data-close style="margin-top:8px">Close</button></aside>
 <div class="ov" id="quote"><form class="box" novalidate><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Request a quote</h3>

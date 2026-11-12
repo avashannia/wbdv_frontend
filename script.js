@@ -91,16 +91,6 @@
   $("#toTop").onclick = function () {
     scrollTo({ top: 0, behavior: "smooth" });
   };
-  $("#shareBtn").onclick = function (e) {
-    e.stopPropagation();
-    var s = $("#share");
-    s.classList.toggle("open");
-    this.setAttribute("aria-expanded", s.classList.contains("open"));
-  };
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest("#share")) $("#share").classList.remove("open");
-  });
-
   /* ---- Currency (base PHP) ---- */
   var rates = { PHP: 1, USD: 0.0172, EUR: 0.0159 },
     sym = { PHP: "₱", USD: "$", EUR: "€" },
