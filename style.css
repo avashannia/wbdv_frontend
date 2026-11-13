@@ -364,7 +364,7 @@ h2 {
   font-style: normal;
   font-size: 13px;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: #f3efe3;
   padding: 10px 14px;
   border-radius: 12px;
 }
@@ -766,7 +766,7 @@ h2 {
 }
 .fw h1 span,
 .wm h1 span {
-  color: #fff;
+  color: #f3efe3;
 }
 
 /* ===== 1. THEME TOKENS (navbar, panels) ===== */
@@ -833,7 +833,7 @@ h2 {
   font-size: 26px;
   letter-spacing: -0.04em;
   text-decoration: none;
-  color: #fff;
+  color: #f3efe3;
 }
 .menu {
   display: flex;
