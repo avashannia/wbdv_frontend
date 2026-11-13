@@ -10,8 +10,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="./style.css">
 <link rel="stylesheet" href="./brand.css">
+<link rel="stylesheet" href="./theme.css">
 </head>
 <body>
+<div class="prog" id="prog"></div>
 <!-- IMAGE SLOTS: replace src of each <img data-slot="..."> and assets/hero.mp4 (hero video). Slots: fabric-photo-1, warehouse-garments-photo-2, customer-photo-3, product-photo-4, product-photo-5, product-photo-6, product-photo-7, product-photo-8, statement-a, statement-b, owners-photo --><header class="hero" id="top">
   <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/placeholder.svg"><source src="assets/bgvideo.mp4" type="video/mp4"></video>
   <div class="hero-fx" aria-hidden="true"></div>
@@ -20,14 +22,16 @@
     <ul class="menu" id="menu">
       <li class="dd"><button class="ddb" aria-expanded="false" aria-haspopup="true">Products <i class="fa-solid fa-chevron-down"></i></button>
         <div class="panel mega">
-          <div class="col"><h4>Uniforms</h4><div class="thumb t1"><i class="fa-solid fa-user-tie"></i></div><p>Maritime &amp; Culinary Uniforms</p><a class="pill nv" href="#lines">Gear Up</a></div>
-          <div class="col"><h4>Safety Footwear</h4><div class="thumb t2"><i class="fa-solid fa-shoe-prints"></i></div><p>Steel-toe Safety Shoe</p><a class="pill nv" href="#collection">Secure Step</a></div>
+          <div class="col"><h4>Uniforms</h4><div class="thumb t1"><i class="fa-solid fa-user-tie"></i></div><p>Maritime &amp; Culinary Uniforms</p><a class="pill nv" href="#collection" data-cat="Coveralls &amp; Uniforms">Gear Up</a></div>
+          <div class="col"><h4>Safety Footwear</h4><div class="thumb t2"><i class="fa-solid fa-shoe-prints"></i></div><p>Steel-toe Safety Shoe</p><a class="pill nv" href="#collection" data-cat="Safety Footwear">Secure Step</a></div>
         </div></li>
       <li class="dd"><button class="ddb" aria-expanded="false" aria-haspopup="true">About Us <i class="fa-solid fa-chevron-down"></i></button>
         <div class="panel cols">
           <div class="col"><h4>Company</h4><a href="#story"><i class="fa-solid fa-anchor"></i>Our Story</a><a href="#lines"><i class="fa-solid fa-people-group"></i>Our Team</a><a href="#contact"><i class="fa-solid fa-house"></i>Location</a></div>
           <div class="col"><h4>Support</h4><a href="#orders"><i class="fa-solid fa-circle-question"></i>FAQ</a><a href="#contact"><i class="fa-solid fa-envelope"></i>Contact Us</a><a href="#site-footer"><i class="fa-solid fa-file-lines"></i>Policies</a></div>
         </div></li>
+    <li class="only-m"><button class="ddb" data-open="account"><span><i class="fa-solid fa-circle-user"></i>&nbsp; Account</span></button></li>
+      <li class="only-m"><button class="ddb" data-open="search"><span><i class="fa-solid fa-magnifying-glass"></i>&nbsp; Search</span></button></li>
     </ul>
     <div class="ctl">
       <div class="dd"><button class="cur" aria-expanded="false" aria-label="Currency"><i class="fa-solid fa-coins"></i><span id="curCode">PHP</span><i class="fa-solid fa-chevron-down"></i></button>
@@ -47,12 +51,26 @@
   <a class="explore" href="#story"><span>Scroll to explore</span><i class="mouse"><b></b></i></a>
 </header>
 
-<div class="mq" aria-hidden="true"><div>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em></div></div>
+<div class="mq" aria-hidden="true"><div>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em></div>
+<div class="tk" aria-hidden="true"><div class="row"><span><i class="fa-solid fa-anchor"></i>Maritime Coveralls</span><span><i class="fa-solid fa-utensils"></i>Chef Uniforms</span><span><i class="fa-solid fa-shoe-prints"></i>Steel-toe Shoes</span><span><i class="fa-solid fa-helmet-safety"></i>Safety Helmets</span><span><i class="fa-solid fa-life-ring"></i>Life Jackets</span><span><i class="fa-solid fa-wind"></i>Winter Jackets</span><span><i class="fa-solid fa-hand"></i>Work Gloves</span><span><i class="fa-solid fa-ship"></i>Seafarer Essentials</span><span><i class="fa-solid fa-glasses"></i>Eye Protection</span><span><i class="fa-solid fa-anchor"></i>Maritime Coveralls</span><span><i class="fa-solid fa-utensils"></i>Chef Uniforms</span><span><i class="fa-solid fa-shoe-prints"></i>Steel-toe Shoes</span><span><i class="fa-solid fa-helmet-safety"></i>Safety Helmets</span><span><i class="fa-solid fa-life-ring"></i>Life Jackets</span><span><i class="fa-solid fa-wind"></i>Winter Jackets</span><span><i class="fa-solid fa-hand"></i>Work Gloves</span><span><i class="fa-solid fa-ship"></i>Seafarer Essentials</span><span><i class="fa-solid fa-glasses"></i>Eye Protection</span></div><div class="row rev"><span><i class="fa-solid fa-anchor"></i>Maritime Coveralls</span><span><i class="fa-solid fa-utensils"></i>Chef Uniforms</span><span><i class="fa-solid fa-shoe-prints"></i>Steel-toe Shoes</span><span><i class="fa-solid fa-helmet-safety"></i>Safety Helmets</span><span><i class="fa-solid fa-life-ring"></i>Life Jackets</span><span><i class="fa-solid fa-wind"></i>Winter Jackets</span><span><i class="fa-solid fa-hand"></i>Work Gloves</span><span><i class="fa-solid fa-ship"></i>Seafarer Essentials</span><span><i class="fa-solid fa-glasses"></i>Eye Protection</span><span><i class="fa-solid fa-anchor"></i>Maritime Coveralls</span><span><i class="fa-solid fa-utensils"></i>Chef Uniforms</span><span><i class="fa-solid fa-shoe-prints"></i>Steel-toe Shoes</span><span><i class="fa-solid fa-helmet-safety"></i>Safety Helmets</span><span><i class="fa-solid fa-life-ring"></i>Life Jackets</span><span><i class="fa-solid fa-wind"></i>Winter Jackets</span><span><i class="fa-solid fa-hand"></i>Work Gloves</span><span><i class="fa-solid fa-ship"></i>Seafarer Essentials</span><span><i class="fa-solid fa-glasses"></i>Eye Protection</span></div></div>
+</div>
 
 <section class="st" id="story">
   <div class="lbl">[ Garments, done right ]</div>
   <p>We’re dressing teams <span class="in ph" data-p="statement-a"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="statement-a"></span> across schools, offices, <span class="faces"><b></b><b></b><b></b><b></b></span> workshops and <span class="in ph" data-p="statement-b"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="statement-b"></span> every size.</p>
   <span class="badge">Est. 2023</span><small class="lbl">Trusted garments. Honest trading.</small>
+</section>
+
+<section class="feat" id="why">
+  <div class="lbl">[ Why CSSP ]</div>
+  <h2>Built for the sea, the kitchen<br>and the shop floor.</h2>
+  <div class="fgrid">
+    <div class="fc"><i class="fa-solid fa-shield-halved"></i><h3>Tough fabrics</h3><p>Coveralls and jackets made to survive salt, heat and daily wash.</p></div>
+    <div class="fc"><i class="fa-solid fa-boxes-stacked"></i><h3>Bulk-ready</h3><p>Full size runs and repeat orders for crews, kitchens and schools.</p></div>
+    <div class="fc"><i class="fa-solid fa-pen-ruler"></i><h3>Custom branding</h3><p>Embroidered names, patches and ship or company logos.</p></div>
+    <div class="fc"><i class="fa-solid fa-truck-fast"></i><h3>Scheduled delivery</h3><p>Batches timed to your sailing, hiring or school calendar.</p></div>
+  </div>
+  <div class="nums"><div><b data-count="54" data-suf="+">0</b><span>products</span></div><div><b data-count="7">0</b><span>categories</span></div><div><b data-count="2023">0</b><span>established</span></div></div>
 </section>
 
 <section id="orders">
@@ -86,6 +104,7 @@
   </div>
 </section>
 
+<div class="wave" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 Q150 0 300 30 T600 30 T900 30 T1200 30 V60 H0Z" fill="currentColor"/></svg></div>
 <section class="sv deep" id="services"><div>
   <div class="top"><span>Garments for<br>every purpose</span><span style="text-align:right">Made to last<br>wash after wash</span></div>
   <div class="main">
@@ -105,16 +124,14 @@
 </div></section>
 
 <section id="collection">
-  <div class="rg-h"><div><div class="lbl">[ The collection ]</div><h2>Five lines. One goal:<br>garments that fit the work.</h2></div><div><p>Pick by purpose, mix by size, brand it your way.</p><a class="pill w" href="#contact">Order samples</a></div></div>
-  <div class="bento">
-    <div class="pc big ph" data-price="650" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-4"><span class="nb">01</span><span class="bs">Best seller</span><div class="glass"><div><b>School Uniform Set</b><small>Shirt · bottoms · full size run</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="350" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-5"><span class="nb">02</span><div class="glass"><div><b>Polo Shirt</b><small>Soft cotton blend · printable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="420" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-6"><span class="nb">03</span><div class="glass"><div><b>Office Shirt &amp; Blouse</b><small>Wrinkle-resistant</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="480" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-7"><span class="nb">04</span><div class="glass"><div><b>Work Pants</b><small>Reinforced · breathable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="300" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-8"><span class="nb">05</span><div class="glass"><div><b>Tees, Caps &amp; Jerseys</b><small>Team and event wear</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-  </div>
+  <div class="rg-h"><div><div class="lbl">[ The collection ]</div><h2>54+ products.<br>One crew-ready catalog.</h2></div><div><p>Pick by purpose, mix by size, brand it your way.</p><a class="pill w" href="#contact">Order samples</a></div></div>
+  <div class="cat-bar" id="catBar"></div>
+  <p class="lbl" id="catCount" style="margin-bottom:14px"></p>
+  <div class="cgrid" id="catGrid"></div>
+  <button class="pill w more" id="catMore">Load more products</button>
 </section>
 
+<div class="wave" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 Q150 0 300 30 T600 30 T900 30 T1200 30 V60 H0Z" fill="currentColor"/></svg></div>
 <section class="cta deep" id="contact">
   <img src="assets/logo.png" alt="CSSP logo">
   <div class="lbl">[ Ready to order? ]</div>
@@ -134,7 +151,7 @@
     <button class="fb main" id="fmMain" aria-expanded="false" aria-label="Contact options"><i class="fa-solid fa-plus"></i></button>
   </div>
 </div>
-<div class="finfo" id="finfo" aria-live="polite"><b></b><span></span></div>
+<div class="finfo" id="finfo" aria-live="polite"><b></b><span></span><a href="#"></a></div>
 <aside class="drawer" id="drawer" aria-label="Cart"><h3>Your cart</h3><div id="cartList"></div><div class="tot"><span>Total</span><span id="cartTot"></span></div><button class="pill g" data-open="quote">Request a Quote</button><button class="pill" data-close style="margin-top:8px">Close</button></aside>
 <div class="ov" id="quote"><form class="box" novalidate><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Request a quote</h3>
 <label>Name</label><input name="name" required><div class="err"></div><label>Email</label><input name="email" type="email" required><div class="err"></div>
@@ -147,5 +164,6 @@
 <label>Password</label><input name="pw" type="password" minlength="6" required><div class="err"></div><button class="pill g" id="acctGo">Log in</button></form></div>
 <div class="ov sov" id="search"><div class="box"><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Search products</h3><input id="q" placeholder="Polo, uniform, pants..." autocomplete="off"><div class="sr" id="sr"></div></div></div>
 <script src="script.js"></script>
+<script src="catalog.js"></script>
 </body>
 </html>
