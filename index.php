@@ -9,8 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./brand.css">
 </head>
-<body><header class="hero" id="top">
+<body>
+<!-- IMAGE SLOTS: replace src of each <img data-slot="..."> and assets/hero.mp4 (hero video). Slots: fabric-photo-1, warehouse-garments-photo-2, customer-photo-3, product-photo-4, product-photo-5, product-photo-6, product-photo-7, product-photo-8, statement-a, statement-b, owners-photo --><header class="hero" id="top">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/placeholder.svg"><source src="assets/hero.mp4" type="video/mp4"></video>
+  <div class="hero-fx" aria-hidden="true"></div>
   <nav class="nav" id="nav" aria-label="Main">
     <a class="brand" href="#top" aria-label="CSSP home">CSSP</a>
     <ul class="menu" id="menu">
@@ -37,22 +41,24 @@
     </div>
   </nav>
   <div class="hr"><button class="pill g" data-open="quote">Get a Quote</button><br>Quality garments, bulk orders and custom uniforms for schools, companies and teams.</div>
-  <div class="fab"><span>Spring Collection</span><div class="ph" data-p="fabric photo"></div><span>New Arrivals</span></div>
+  <div class="fab"><span>Spring Collection</span><div class="ph" data-p="fabric photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="fabric-photo-1"></div><span>New Arrivals</span></div>
   <div class="wm"><img src="assets/logo.png" alt="CSSP logo"><h1 aria-label="CSSP"><span>C</span><span>S</span><span>S</span><span>P</span></h1></div>
+  <div class="owner ph" data-p="owners-photo"><img class="slot" src="assets/placeholder.svg" alt="The people behind CSSP" data-slot="owners-photo"></div>
+  <a class="explore" href="#story"><span>Scroll to explore</span><i class="mouse"><b></b></i></a>
 </header>
 
 <div class="mq" aria-hidden="true"><div>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em>God is good all the time<em>●</em>Bulk orders. Fair prices.<em>●</em>Uniforms &amp; corporate wear<em>●</em>Est. 2023<em>●</em></div></div>
 
 <section class="st" id="story">
   <div class="lbl">[ Garments, done right ]</div>
-  <p>We’re dressing teams <span class="in a"></span> across schools, offices, <span class="faces"><b></b><b></b><b></b><b></b></span> workshops and <span class="in b"></span> every size.</p>
+  <p>We’re dressing teams <span class="in ph" data-p="statement-a"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="statement-a"></span> across schools, offices, <span class="faces"><b></b><b></b><b></b><b></b></span> workshops and <span class="in ph" data-p="statement-b"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="statement-b"></span> every size.</p>
   <span class="badge">Est. 2023</span><small class="lbl">Trusted garments. Honest trading.</small>
 </section>
 
 <section id="orders">
   <div class="top2">
     <div><h2>There’s always<br>an order open.</h2><p style="color:var(--muted);max-width:380px">Plan your bulk orders around our production windows. Samples first, then delivery to the address you choose.</p><a class="pill w" href="#contact">See full calendar</a></div>
-    <div class="ph" data-p="warehouse / garments photo"><i>Next batch · slots open</i></div>
+    <div class="ph" data-p="warehouse / garments photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="warehouse-garments-photo-2"><i>Next batch · slots open</i></div>
   </div>
   <div class="cal-h"><span style="color:var(--text);font-size:18px">What’s happening this fortnight</span><span class="lbl">[ Nov 16 – Nov 29 ]</span></div>
   <div class="cal">
@@ -65,7 +71,7 @@
 
 <section id="lines">
   <div class="split">
-    <div class="ph" data-p="customer photo"><div class="glass"><b>Client Name</b><br>“Placeholder testimonial: consistent sizing, clean finishing and orders that arrive when promised.”</div></div>
+    <div class="ph" data-p="customer photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="customer-photo-3"><div class="glass"><b>Client Name</b><br>“Placeholder testimonial: consistent sizing, clean finishing and orders that arrive when promised.”</div></div>
     <div class="dp">
       <div class="lbl">[ Choose your line ]</div>
       <h2>Every team wears<span>something different.</span></h2>
@@ -101,11 +107,11 @@
 <section id="collection">
   <div class="rg-h"><div><div class="lbl">[ The collection ]</div><h2>Five lines. One goal:<br>garments that fit the work.</h2></div><div><p>Pick by purpose, mix by size, brand it your way.</p><a class="pill w" href="#contact">Order samples</a></div></div>
   <div class="bento">
-    <div class="pc big ph" data-price="650" data-p="product photo"><span class="nb">01</span><span class="bs">Best seller</span><div class="glass"><div><b>School Uniform Set</b><small>Shirt · bottoms · full size run</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="350" data-p="product photo"><span class="nb">02</span><div class="glass"><div><b>Polo Shirt</b><small>Soft cotton blend · printable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="420" data-p="product photo"><span class="nb">03</span><div class="glass"><div><b>Office Shirt &amp; Blouse</b><small>Wrinkle-resistant</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="480" data-p="product photo"><span class="nb">04</span><div class="glass"><div><b>Work Pants</b><small>Reinforced · breathable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
-    <div class="pc ph" data-price="300" data-p="product photo"><span class="nb">05</span><div class="glass"><div><b>Tees, Caps &amp; Jerseys</b><small>Team and event wear</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
+    <div class="pc big ph" data-price="650" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-4"><span class="nb">01</span><span class="bs">Best seller</span><div class="glass"><div><b>School Uniform Set</b><small>Shirt · bottoms · full size run</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
+    <div class="pc ph" data-price="350" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-5"><span class="nb">02</span><div class="glass"><div><b>Polo Shirt</b><small>Soft cotton blend · printable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
+    <div class="pc ph" data-price="420" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-6"><span class="nb">03</span><div class="glass"><div><b>Office Shirt &amp; Blouse</b><small>Wrinkle-resistant</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
+    <div class="pc ph" data-price="480" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-7"><span class="nb">04</span><div class="glass"><div><b>Work Pants</b><small>Reinforced · breathable</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
+    <div class="pc ph" data-price="300" data-p="product photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="product-photo-8"><span class="nb">05</span><div class="glass"><div><b>Tees, Caps &amp; Jerseys</b><small>Team and event wear</small></div><span class="price"></span><button class="ar add" aria-label="Add to cart"><i class="fa-solid fa-plus"></i></button></div></div>
   </div>
 </section>
 
@@ -119,8 +125,16 @@
 <div class="fw" aria-hidden="true"><img src="assets/logo.png" alt="CSSP logo"><h1><span>C</span><span>S</span><span>S</span><span>P</span></h1></div></div>
 <div class="fabs">
   <button class="fb" id="toTop" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
-  <a class="fb contact-link" href="tel:+639000000000" aria-label="Call CSSP"><i class="fa-solid fa-phone"></i></a>
+  <div class="fm" id="fm">
+    <div class="fm-list">
+      <a class="fb sub" data-info="call" href="tel:+639000000000" aria-label="Call us" style="--k:2"><i class="fa-solid fa-phone"></i></a>
+      <a class="fb sub" data-info="msg" href="mailto:hello@example.com" aria-label="Message us" style="--k:1"><i class="fa-solid fa-envelope"></i></a>
+      <button class="fb sub" data-info="share" aria-label="Share link" style="--k:0"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>
+    <button class="fb main" id="fmMain" aria-expanded="false" aria-label="Contact options"><i class="fa-solid fa-plus"></i></button>
+  </div>
 </div>
+<div class="finfo" id="finfo" aria-live="polite"><b></b><span></span></div>
 <aside class="drawer" id="drawer" aria-label="Cart"><h3>Your cart</h3><div id="cartList"></div><div class="tot"><span>Total</span><span id="cartTot"></span></div><button class="pill g" data-open="quote">Request a Quote</button><button class="pill" data-close style="margin-top:8px">Close</button></aside>
 <div class="ov" id="quote"><form class="box" novalidate><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Request a quote</h3>
 <label>Name</label><input name="name" required><div class="err"></div><label>Email</label><input name="email" type="email" required><div class="err"></div>
