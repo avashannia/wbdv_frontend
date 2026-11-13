@@ -178,6 +178,24 @@
     }, 1800);
   }
 
+  /* expose cart to catalog.js */
+  window.CSSP = {
+    add: function (n, p) {
+      var f = cart.find(function (i) {
+        return i.n === n;
+      });
+      f ? f.q++ : cart.push({ n: n, p: p, q: 1 });
+      renderCart();
+      toast(n + " added to cart");
+      var c = $("#cartCount");
+      c.classList.remove("bump");
+      void c.offsetWidth;
+      c.classList.add("bump");
+    },
+    prices: function () {
+      renderPrices();
+    },
+  };
   /* ---- Overlays: drawer, modals, search ---- */
   function openOv(el) {
     closeAll();
@@ -227,14 +245,14 @@
   $("#q").oninput = function () {
     var v = this.value.toLowerCase().trim();
     $("#sr").innerHTML = v
-      ? items
+      ? (window.CSSP_ITEMS || items)
           .filter(function (i) {
             return (i.n + i.d).toLowerCase().includes(v);
           })
           .map(function (i, x) {
             return (
               '<a href="#collection" data-i="' +
-              items.indexOf(i) +
+              (window.CSSP_ITEMS || items).indexOf(i) +
               '"><b>' +
               i.n +
               "</b><br><small>" +
@@ -364,7 +382,10 @@
   function fmSet(o) {
     fm.classList.toggle("open", o);
     $("#fmMain").setAttribute("aria-expanded", o);
-    if (!o) fi.classList.remove("show");
+    if (!o) {
+      fi.classList.remove("show");
+      pinned = null;
+    }
   }
   function sharePage() {
     var u = location.href.split("#")[0];
@@ -387,12 +408,12 @@
     }
   });
   fm.addEventListener("pointerleave", function (e) {
-    if (e.pointerType === "mouse")
+    if (e.pointerType === "mouse" && !pinned)
       fT = setTimeout(function () {
         fmSet(false);
       }, 250);
   });
-  $$(".fm .sub").forEach(function (b) {
+  $$(".fm .sub-old").forEach(function (b) {
     function show() {
       var t = INFO[b.dataset.info];
       $("b", fi).textContent = t[0];
@@ -414,8 +435,63 @@
       fmSet(false);
     });
   });
+  /* Chat bubble beside the clicked/hovered floating button */
+  var pinned = null;
+  var INFO2 = {
+    call: {
+      t: "Call us",
+      s: "Mon to Sat, 8 AM to 6 PM",
+      l: "+63 900 000 0000",
+      h: "tel:+639000000000",
+    },
+    msg: {
+      t: "Email us",
+      s: "We reply within one business day.",
+      l: "hello@example.com",
+      h: "mailto:hello@example.com",
+    },
+    share: {
+      t: "Share this page",
+      s: "Copy or share the link with your team.",
+      l: "Share now",
+      h: "#",
+    },
+  };
+  function bubble(b) {
+    var t = INFO2[b.dataset.info],
+      a = $("a", fi),
+      r = b.getBoundingClientRect();
+    $("b", fi).textContent = t.t;
+    $("span", fi).textContent = t.s;
+    a.textContent = t.l;
+    a.href = t.h;
+    a.dataset.act = b.dataset.info;
+    fi.style.top = r.top + r.height / 2 + "px";
+    fi.style.right = innerWidth - r.left + 16 + "px";
+    fi.classList.add("show");
+  }
+  $$(".fm .sub").forEach(function (b) {
+    b.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "mouse" && !pinned) bubble(b);
+    });
+    b.addEventListener("pointerleave", function (e) {
+      if (e.pointerType === "mouse" && !pinned) fi.classList.remove("show");
+    });
+    b.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      pinned = b;
+      bubble(b);
+    });
+  });
+  $("a", fi).addEventListener("click", function (e) {
+    if (this.dataset.act === "share") {
+      e.preventDefault();
+      sharePage();
+    }
+  });
   document.addEventListener("click", function (e) {
-    if (!e.target.closest("#fm")) fmSet(false);
+    if (!e.target.closest("#fm, #finfo")) fmSet(false);
   });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") fmSet(false);
@@ -450,4 +526,222 @@
 
   /* ---- Init ---- */
   renderPrices();
+})();
+
+/* after */
+(function () {
+  "use strict";
+  var $ = function (s, c) {
+      return (c || document).querySelector(s);
+    },
+    $$ = function (s, c) {
+      return Array.from((c || document).querySelectorAll(s));
+    };
+  /* [category, name, price PHP, FontAwesome icon, badge, optional image path] */
+  var C = {
+    U: "Coveralls & Uniforms",
+    K: "Chef & Kitchen",
+    J: "Jackets & Rainwear",
+    F: "Safety Footwear",
+    H: "Head, Eye & Ear PPE",
+    B: "Gloves & Body PPE",
+    S: "Seafarer Essentials",
+  };
+  var D = [
+    ["U", "Coveralls (Royal Blue)", 1000, "user-shield", "best"],
+    ["U", "Coveralls (Orange)", 1000, "user-shield", "new"],
+    ["U", "Coveralls (Khaki)", 1000, "user-shield", "sale"],
+    ["U", "Coveralls (Navy)", 1000, "user-shield"],
+    ["U", "Coveralls (Green)", 1000, "user-shield"],
+    ["U", "Coveralls (Red)", 1000, "user-shield"],
+    ["U", "Coveralls (Grey)", 1000, "user-shield"],
+    ["U", "Coveralls (White)", 1050, "user-shield", "new"],
+    ["K", "Chef Polo Long Sleeve (Ver. 1)", 800, "utensils", "new"],
+    ["K", "Chef Polo Long Sleeve (Ver. 2)", 800, "utensils"],
+    ["K", "Chef Polo Short Sleeve", 750, "utensils", "best"],
+    ["K", "Chef Pants (Checkered)", 700, "utensils", "best"],
+    ["K", "Kitchen Pants (Black)", 700, "utensils", "sale"],
+    ["K", "Bib Apron", 350, "utensils"],
+    ["K", "Chef Cap", 180, "hat-cowboy"],
+    ["K", "Neckerchief", 120, "utensils"],
+    ["J", "Winter Jacket", 1500, "wind"],
+    ["J", "Ordinary Jacket", 1500, "wind"],
+    ["J", "Rain Jacket", 950, "cloud-showers-heavy", "new"],
+    ["J", "Reflective Jacket", 1300, "wind", "best"],
+    ["J", "Fleece Jacket", 1100, "wind"],
+    ["J", "Thermal Parka", 2200, "snowflake", "new"],
+    ["F", "MG Safety BS-07 High Cut", 2100, "shoe-prints", "best"],
+    ["F", "MG Safety BS-08 Low Cut", 1900, "shoe-prints", "sale"],
+    ["F", "Rockwinner Safety Shoe", 2300, "shoe-prints", "new"],
+    ["F", "PVC Rubber Boots", 850, "shoe-prints"],
+    ["F", "Steel-toe Rigger Boots", 2600, "shoe-prints"],
+    ["F", "Anti-slip Galley Shoes", 1450, "shoe-prints"],
+    ["F", "Safety Sandals", 1200, "shoe-prints"],
+    ["F", "Insulated Deck Boots", 2800, "shoe-prints", "new"],
+    ["H", "Safety Helmet", 380, "helmet-safety", "best"],
+    ["H", "Hard Hat with Chin Strap", 450, "helmet-safety"],
+    ["H", "Welding Goggles", 260, "glasses"],
+    ["H", "Clear Safety Glasses", 150, "glasses", "sale"],
+    ["H", "Ear Muffs", 420, "headphones"],
+    ["H", "Ear Plugs (Box of 50)", 280, "headphones"],
+    ["H", "Face Shield", 320, "mask-face"],
+    ["H", "Dust Mask (Pack of 20)", 240, "mask-face"],
+    ["B", "Cotton Gloves (Dozen)", 300, "hand"],
+    ["B", "Leather Work Gloves", 280, "hand", "best"],
+    ["B", "Rubber Gloves", 180, "hand"],
+    ["B", "Cut-resistant Gloves", 390, "hand", "new"],
+    ["B", "Safety Harness", 1850, "link"],
+    ["B", "Reflective Vest", 220, "vest", "sale"],
+    ["B", "Life Jacket", 1600, "life-ring", "best"],
+    ["B", "Rain Suit Set", 1100, "cloud-showers-heavy"],
+    ["S", "Sailor Cap", 250, "anchor"],
+    ["S", "Epaulettes (Pair)", 200, "anchor"],
+    ["S", "Embroidered Name Tag", 90, "id-badge"],
+    ["S", "Embroidered Patch", 120, "anchor", "new"],
+    ["S", "Cotton Socks (3 pairs)", 210, "socks"],
+    ["S", "Thermal Underwear Set", 650, "temperature-low"],
+    ["S", "Bath Towel", 320, "bath"],
+    ["S", "Duffel Bag", 900, "bag-shopping", "best"],
+  ];
+  var HUE = { U: 150, K: 165, J: 140, F: 175, H: 130, B: 158, S: 185 },
+    BADGE = { best: "Bestseller", new: "New", sale: "Sale" };
+  var items = D.map(function (d, i) {
+    return {
+      c: d[0],
+      cat: C[d[0]],
+      n: d[1],
+      p: d[2],
+      ic: d[3],
+      bd: d[4],
+      img: d[5] || "",
+      low: i % 7 === 3,
+      d: C[d[0]],
+    };
+  });
+  window.CSSP_ITEMS = items; /* script.js search reads this */
+  var grid = $("#catGrid"),
+    bar = $("#catBar"),
+    more = $("#catMore"),
+    cnt = $("#catCount");
+  if (!grid) return;
+  var cat = "All",
+    shown = 12;
+  function cards() {
+    var l = items.filter(function (i) {
+      return cat === "All" || i.cat === cat;
+    });
+    cnt.textContent = l.length + " items";
+    grid.innerHTML = l
+      .slice(0, shown)
+      .map(function (i, k) {
+        var x = items.indexOf(i);
+        return (
+          '<article class="pk" style="--i:' +
+          (k % 12) +
+          ";--h:" +
+          HUE[i.c] +
+          '" data-price="' +
+          i.p +
+          '"><div class="pk-img">' +
+          (i.bd
+            ? '<span class="tagb ' + i.bd + '">' + BADGE[i.bd] + "</span>"
+            : "") +
+          (i.img
+            ? '<img src="' + i.img + '" alt="' + i.n + '" loading="lazy">'
+            : '<i class="fa-solid fa-' + i.ic + '"></i>') +
+          '</div><div class="pk-b"><span class="pk-c">' +
+          i.cat +
+          '</span><span class="pk-n">' +
+          i.n +
+          '</span><span class="price"></span><span class="stk' +
+          (i.low ? " low" : "") +
+          '">' +
+          (i.low ? "Only a few left" : "Stock Available") +
+          '</span><button class="add2" data-x="' +
+          x +
+          '"><i class="fa-solid fa-cart-shopping"></i> Add to cart</button></div></article>'
+        );
+      })
+      .join("");
+    more.style.display = l.length > shown ? "" : "none";
+    window.CSSP.prices();
+  }
+  bar.innerHTML = ["All"]
+    .concat(
+      Object.keys(C).map(function (k) {
+        return C[k];
+      }),
+    )
+    .map(function (n) {
+      return (
+        '<button class="chip' +
+        (n === "All" ? " on" : "") +
+        '" data-f="' +
+        n +
+        '">' +
+        n +
+        "</button>"
+      );
+    })
+    .join("");
+  function setCat(n) {
+    cat = n;
+    shown = 12;
+    $$(".chip", bar).forEach(function (c) {
+      c.classList.toggle("on", c.dataset.f === n);
+    });
+    cards();
+  }
+  bar.onclick = function (e) {
+    var b = e.target.closest(".chip");
+    if (b) setCat(b.dataset.f);
+  };
+  more.onclick = function () {
+    shown += 12;
+    cards();
+  };
+  grid.onclick = function (e) {
+    var b = e.target.closest(".add2");
+    if (b) {
+      var i = items[+b.dataset.x];
+      window.CSSP.add(i.n, i.p);
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-cat]");
+    if (a) setCat(a.dataset.cat);
+  });
+  cards();
+  /* animated counters */
+  var io = new IntersectionObserver(
+    function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target,
+          end = +el.dataset.count,
+          t0 = performance.now();
+        io.unobserve(el);
+        (function s(t) {
+          var k = Math.min((t - t0) / 1400, 1);
+          el.textContent =
+            Math.round(end * (1 - Math.pow(1 - k, 3))) + (el.dataset.suf || "");
+          if (k < 1) requestAnimationFrame(s);
+        })(t0);
+      });
+    },
+    { threshold: 0.5 },
+  );
+  $$("[data-count]").forEach(function (el) {
+    io.observe(el);
+  });
+  /* scroll progress bar */
+  var pg = $("#prog");
+  addEventListener(
+    "scroll",
+    function () {
+      var h = document.documentElement;
+      pg.style.width = (scrollY / (h.scrollHeight - innerHeight)) * 100 + "%";
+    },
+    { passive: true },
+  );
 })();
