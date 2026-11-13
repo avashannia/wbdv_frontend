@@ -43,7 +43,7 @@
   <div class="hr"><button class="pill g" data-open="quote">Get a Quote</button><br>Quality garments, bulk orders and custom uniforms for schools, companies and teams.</div>
   <div class="fab"><span>Spring Collection</span><div class="ph" data-p="fabric photo"><img class="slot" src="assets/placeholder.svg" alt="" data-slot="fabric-photo-1"></div><span>New Arrivals</span></div>
   <div class="wm"><img src="assets/logo.png" alt="CSSP logo"><h1 aria-label="CSSP"><span>C</span><span>S</span><span>S</span><span>P</span></h1></div>
-  <div class="owner ph" data-p="owners-photo"><img class="slot" src="assets/placeholder.svg" alt="The people behind CSSP" data-slot="owners-photo"></div>
+  <!--<div class="owner ph" data-p="owners-photo"><img class="slot" src="assets/placeholder.svg" alt="The people behind CSSP" data-slot="owners-photo"></div>-->
   <a class="explore" href="#story"><span>Scroll to explore</span><i class="mouse"><b></b></i></a>
 </header>
 
