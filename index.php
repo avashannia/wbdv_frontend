@@ -13,7 +13,7 @@
 </head>
 <body>
 <!-- IMAGE SLOTS: replace src of each <img data-slot="..."> and assets/hero.mp4 (hero video). Slots: fabric-photo-1, warehouse-garments-photo-2, customer-photo-3, product-photo-4, product-photo-5, product-photo-6, product-photo-7, product-photo-8, statement-a, statement-b, owners-photo --><header class="hero" id="top">
-  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/placeholder.svg"><source src="assets/hero.mp4" type="video/mp4"></video>
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/placeholder.svg"><source src="assets/bgvideo.mp4" type="video/mp4"></video>
   <div class="hero-fx" aria-hidden="true"></div>
   <nav class="nav" id="nav" aria-label="Main">
     <a class="brand" href="#top" aria-label="CSSP home">CSSP</a>
