@@ -1,4 +1,3 @@
-/* CSSP Garments Trading - vanilla JS, organized by feature */
 (function () {
   "use strict";
   var $ = function (s, c) {
@@ -52,7 +51,8 @@
     b.addEventListener("click", function (e) {
       e.stopPropagation();
       var d = b.parentNode,
-        was = d.classList.contains("open");
+        was = d.classList.contains("open") && d.dataset.h !== "1";
+      d.dataset.h = "";
       closeDD();
       if (!was) {
         d.classList.add("open");
@@ -286,6 +286,167 @@
         t.dataset.tab === "in" ? "Log in" : "Create account";
     };
   });
+
+  /* ---- Brand: dropdown hover/keyboard, floating menu, reveal, hero fades ---- */
+  var hoverMQ = matchMedia("(hover: hover) and (min-width: 992px)"),
+    hT,
+    fT;
+  function openDD(d, byHover) {
+    closeDD();
+    d.classList.add("open");
+    if (byHover) d.dataset.h = "1";
+    $("button", d).setAttribute("aria-expanded", "true");
+  }
+  $$(".menu .dd").forEach(function (d) {
+    d.addEventListener("pointerenter", function (e) {
+      if (e.pointerType !== "mouse" || !hoverMQ.matches) return;
+      clearTimeout(hT);
+      hT = setTimeout(function () {
+        openDD(d, true);
+      }, 90);
+    });
+    d.addEventListener("pointerleave", function (e) {
+      if (e.pointerType !== "mouse" || !hoverMQ.matches) return;
+      clearTimeout(hT);
+      hT = setTimeout(closeDD, 220);
+    });
+    d.addEventListener("keydown", function (e) {
+      var items = $$(".panel a", d),
+        i = items.indexOf(document.activeElement);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!d.classList.contains("open")) openDD(d, false);
+        i =
+          e.key === "ArrowDown"
+            ? (i + 1) % items.length
+            : i <= 0
+              ? items.length - 1
+              : i - 1;
+        items[i].focus();
+      } else if (e.key === "Escape") {
+        closeDD();
+        $(".ddb", d).focus();
+      }
+    });
+    d.addEventListener("focusout", function (e) {
+      if (!d.contains(e.relatedTarget)) closeDD();
+    });
+  });
+  var owner = $(".owner"),
+    explore = $(".explore"),
+    vid = $(".hero-video");
+  function heroFx() {
+    if (owner) owner.classList.toggle("gone", scrollY > innerHeight * 0.25);
+    if (explore) explore.classList.toggle("gone", scrollY > 40);
+  }
+  addEventListener(
+    "scroll",
+    function () {
+      closeDD();
+      heroFx();
+    },
+    { passive: true },
+  );
+  heroFx();
+  if (vid) {
+    vid.muted = true;
+    var vp = vid.play();
+    if (vp && vp.catch) vp.catch(function () {});
+  }
+
+  var fm = $("#fm"),
+    fi = $("#finfo");
+  var INFO = {
+    call: ["Call us", "Mon to Sat, 8 AM to 6 PM · +63 900 000 0000"],
+    msg: ["Message us", "Email our team. We reply within one business day."],
+    share: ["Share link", "Copy or share this page with your team."],
+  };
+  function fmSet(o) {
+    fm.classList.toggle("open", o);
+    $("#fmMain").setAttribute("aria-expanded", o);
+    if (!o) fi.classList.remove("show");
+  }
+  function sharePage() {
+    var u = location.href.split("#")[0];
+    if (navigator.share)
+      navigator.share({ title: document.title, url: u }).catch(function () {});
+    else if (navigator.clipboard)
+      navigator.clipboard.writeText(u).then(function () {
+        toast("Link copied");
+      });
+    else toast(u);
+  }
+  $("#fmMain").onclick = function (e) {
+    e.stopPropagation();
+    fmSet(!fm.classList.contains("open"));
+  };
+  fm.addEventListener("pointerenter", function (e) {
+    if (e.pointerType === "mouse") {
+      clearTimeout(fT);
+      fmSet(true);
+    }
+  });
+  fm.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse")
+      fT = setTimeout(function () {
+        fmSet(false);
+      }, 250);
+  });
+  $$(".fm .sub").forEach(function (b) {
+    function show() {
+      var t = INFO[b.dataset.info];
+      $("b", fi).textContent = t[0];
+      $("span", fi).textContent = t[1];
+      fi.classList.add("show");
+    }
+    function hide() {
+      fi.classList.remove("show");
+    }
+    b.addEventListener("pointerenter", show);
+    b.addEventListener("pointerleave", hide);
+    b.addEventListener("focus", show);
+    b.addEventListener("blur", hide);
+    b.addEventListener("click", function (e) {
+      if (b.dataset.info === "share") {
+        e.preventDefault();
+        sharePage();
+      }
+      fmSet(false);
+    });
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#fm")) fmSet(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") fmSet(false);
+  });
+
+  if (
+    "IntersectionObserver" in window &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    var io = new IntersectionObserver(
+      function (es) {
+        es.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var el = en.target;
+          el.classList.add("in");
+          io.unobserve(el);
+          setTimeout(function () {
+            el.classList.remove("rv", "in");
+          }, 1400);
+        });
+      },
+      { threshold: 0.12 },
+    );
+    $$(
+      "section > *, .cal > *, .bento > *, .tags span, .mq, .fo, .fw, .stats",
+    ).forEach(function (el, i) {
+      el.classList.add("rv");
+      el.style.setProperty("--i", i % 5);
+      io.observe(el);
+    });
+  }
 
   /* ---- Init ---- */
   renderPrices();
