@@ -90,8 +90,10 @@ a {
   gap: 8px;
   border-radius: 99px;
   padding: 12px 22px;
-  font: 600 14px/1 inherit;
-  font-family: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
   text-decoration: none;
   border: 1px solid var(--line);
   background: none;
@@ -851,8 +853,9 @@ h2 {
   border: 0;
   background: none;
   color: inherit;
-  font: 600 15px inherit;
-  font-family: inherit;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
   padding: 10px 16px;
   border-radius: 12px;
   cursor: pointer;
@@ -1012,8 +1015,9 @@ h2 {
   border: 0;
   background: none;
   color: inherit;
-  font: 600 14px inherit;
-  font-family: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
   padding: 9px 10px;
   border-radius: 8px;
   cursor: pointer;
@@ -1051,7 +1055,10 @@ h2 {
   border-radius: 9px;
   background: #e5384a;
   color: #fff;
-  font: 700 11px/18px inherit;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
   text-align: center;
   padding: 0 4px;
 }
@@ -1262,8 +1269,9 @@ h2 {
   border: 1px solid var(--line);
   background: none;
   color: inherit;
-  font: 600 14px inherit;
-  font-family: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
 .tabs .on {
