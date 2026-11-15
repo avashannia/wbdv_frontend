@@ -73,7 +73,7 @@
       <video autoplay muted loop playsinline preload="auto">
         <source src="assets/bgvideo.mp4" type="video/mp4">
       </video>
-      <div class="hero-top rv"><button class="pill" data-open="quote">Get a Quote</button><br>Quality garments, bulk
+      <div class="hero-top rv"><button class="pill" data-open="quote">Order Now</button><br>Quality garments, bulk
         orders and custom uniforms for crews, kitchens and teams.</div>
       <div class="hero-row rv">
         <h1 class="wm">CSSP</h1>
@@ -152,9 +152,9 @@
     </section>
 
     <section id="preview">
-      <div class="wrap">
+      <div class="wrap pv-head">
         <div class="lbl rv">[ Preview the line-up ]</div>
-        <h2 class="rv">Built for the sea, the kitchen<br>and the shop floor.</h2>
+        <h2 class="rv">Built for the job.</h2>
       </div>
       <div class="mrq" id="mrq" aria-label="Product preview slider"></div>
       <div class="mrq-cta"><button class="pill" data-open="quote">Request the full catalog (54+ items)</button></div>
@@ -184,20 +184,10 @@
     </section>
 
     <footer id="site-footer">
-      <div class="ftk" aria-hidden="true">
-        <div class="trk"><span>Maritime Coveralls <i class="fa-solid fa-anchor"></i></span><span>Chef Uniforms <i
-              class="fa-solid fa-anchor"></i></span><span>Steel-toe Shoes <i
-              class="fa-solid fa-anchor"></i></span><span>Safety Helmets <i
-              class="fa-solid fa-anchor"></i></span><span>Life Jackets <i
-              class="fa-solid fa-anchor"></i></span><span>Winter Jackets <i
-              class="fa-solid fa-anchor"></i></span><span>Work Gloves <i
-              class="fa-solid fa-anchor"></i></span><span>Maritime Coveralls <i
-              class="fa-solid fa-anchor"></i></span><span>Chef Uniforms <i
-              class="fa-solid fa-anchor"></i></span><span>Steel-toe Shoes <i
-              class="fa-solid fa-anchor"></i></span><span>Safety Helmets <i
-              class="fa-solid fa-anchor"></i></span><span>Life Jackets <i
-              class="fa-solid fa-anchor"></i></span><span>Winter Jackets <i
-              class="fa-solid fa-anchor"></i></span><span>Work Gloves <i class="fa-solid fa-anchor"></i></span></div>
+      <div class="wave" aria-hidden="true">
+        <svg class="wv wv1" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,70 Q300,10 600,70 T1200,70 T1800,70 T2400,70 V120 H0 Z"/></svg>
+        <svg class="wv wv2" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,66 Q150,14 300,66 T600,66 T900,66 T1200,66 T1500,66 T1800,66 T2100,66 T2400,66 V120 H0 Z"/></svg>
+        <svg class="wv wv3" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,88 Q100,48 200,88 T400,88 T600,88 T800,88 T1000,88 T1200,88 T1400,88 T1600,88 T1800,88 T2000,88 T2200,88 T2400,88 V120 H0 Z"/></svg>
       </div>
       <div class="fgrid">
         <div class="fbrand"><img src="assets/logo.png" alt="CSSP logo">CSSP</div>
@@ -213,6 +203,21 @@
         </div>
       </div>
       <div class="legal"><span>© 2026 CSSP Garments Trading</span><span>Privacy · Terms</span></div>
+      <div class="ftk" aria-hidden="true">
+        <div class="trk"><span>Maritime Coveralls <i class="fa-solid fa-anchor"></i></span><span>Chef Uniforms <i
+              class="fa-solid fa-anchor"></i></span><span>Steel-toe Shoes <i
+              class="fa-solid fa-anchor"></i></span><span>Safety Helmets <i
+              class="fa-solid fa-anchor"></i></span><span>Life Jackets <i
+              class="fa-solid fa-anchor"></i></span><span>Winter Jackets <i
+              class="fa-solid fa-anchor"></i></span><span>Work Gloves <i
+              class="fa-solid fa-anchor"></i></span><span>Maritime Coveralls <i
+              class="fa-solid fa-anchor"></i></span><span>Chef Uniforms <i
+              class="fa-solid fa-anchor"></i></span><span>Steel-toe Shoes <i
+              class="fa-solid fa-anchor"></i></span><span>Safety Helmets <i
+              class="fa-solid fa-anchor"></i></span><span>Life Jackets <i
+              class="fa-solid fa-anchor"></i></span><span>Winter Jackets <i
+              class="fa-solid fa-anchor"></i></span><span>Work Gloves <i class="fa-solid fa-anchor"></i></span></div>
+      </div>
     </footer>
 
     <div class="fabs">
@@ -280,5 +285,4 @@
     </div>
     <script src="./js files/script.js?v=2"></script>
 </body>
-
 </html>
