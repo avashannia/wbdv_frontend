@@ -4,7 +4,11 @@
   --fill: #0a2471;
   --on: #fff8e7;
   --vf: none;
-  --ov: linear-gradient(rgba(10, 36, 113, 0.22), rgba(10, 36, 113, 0.5));
+  --ov: rgba(10, 36, 113, 0.2);
+  --hero-ink: #fff8e7;
+  --hero-btn-bg: #fff8e7;
+  --hero-btn-ink: #0a2471;
+  --hero-shadow: 0 1px 14px rgba(10, 36, 113, 0.45);
   --sh: 0 14px 40px rgba(10, 36, 113, 0.2);
 }
 :root[data-theme="dark"] {
@@ -12,7 +16,11 @@
   --ink: #fff8e7;
   --fill: #0e2877;
   --vf: grayscale(1) contrast(1.1);
-  --ov: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.75));
+  --ov: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  --hero-ink: #0a2471;
+  --hero-btn-bg: #0a2471;
+  --hero-btn-ink: #fff8e7;
+  --hero-shadow: 0 0 18px rgba(255, 248, 231, 0.35);
   --sh: 0 14px 40px rgba(0, 0, 0, 0.6);
 }
 :root {
@@ -411,15 +419,16 @@ section {
   flex-direction: column;
   justify-content: flex-end;
   gap: 28px;
-  padding: 120px clamp(18px, 4vw, 48px) clamp(18px, 3vh, 34px);
-  color: #fff8e7;
+  padding: 120px clamp(18px, 4vw, 48px) 92px;
+  color: var(--hero-ink);
+  transition: color 0.5s;
   overflow-x: clip;
 }
 .hero video {
   position: absolute;
   inset: 0 0 calc(-1 * var(--ext)) 0;
   width: 100%;
-  height: 100%;
+  height: auto; /* was 100%, which cancelled the bottom extension, so no fade was visible */
   object-fit: cover;
   filter: var(--vf);
   z-index: 0;
@@ -450,12 +459,13 @@ section {
   font-size: 14px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-shadow: var(--hero-shadow);
 }
 .hero-top .pill {
   margin-bottom: 16px;
-  background: #fff8e7;
-  color: #0a2471;
-  border-color: #fff8e7;
+  background: var(--hero-btn-bg);
+  color: var(--hero-btn-ink);
+  border-color: var(--hero-btn-bg);
 }
 .hero-row {
   display: flex;
@@ -469,12 +479,15 @@ section {
   letter-spacing: -0.07em;
   line-height: 0.78;
   margin-left: -0.04em;
+  text-shadow: var(--hero-shadow);
 }
 .hero > .explore {
   position: absolute;
-  left: auto;
-  right: clamp(18px, 4vw, 48px);
-  bottom: clamp(18px, 3vh, 34px);
+  left: 50%;
+  right: auto;
+  bottom: 20px;
+  transform: translateX(-50%);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -514,6 +527,7 @@ section {
 .intro {
   position: relative;
   z-index: 2;
+  padding-bottom: clamp(30px, 4vw, 50px);
 }
 .intro h2 {
   max-width: 700px;
@@ -570,6 +584,7 @@ section {
 
 /* 2. SCROLL-FILL STATEMENT */
 .fill {
+  padding-top: 0;
   min-height: 170vh;
   display: grid;
   align-items: start;
@@ -1438,9 +1453,6 @@ footer {
   }
   .hero-top {
     max-width: 80%;
-  }
-  .hero > .explore {
-    display: none;
   }
 }
 @media (max-width: 380px) {
