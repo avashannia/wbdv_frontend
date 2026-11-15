@@ -70,12 +70,14 @@
     </nav>
 
     <header class="hero" id="top">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="assets/bgvideo.mp4" type="video/mp4">
-      </video>
+      <div class="hero-media">
+        <video autoplay muted loop playsinline preload="auto">
+          <source src="assets/bgvideo.mp4" type="video/mp4">
+        </video>
+      </div>
       <div class="hero-top rv"><button class="pill" data-open="quote">Order Now</button><br>Quality garments, bulk
         orders and custom uniforms for crews, kitchens and teams.</div>
-      <div class="hero-row rv">
+      <div class="hero-row">
         <h1 class="wm">CSSP</h1>
       </div>
       <a class="explore" href="#story"><span>Scroll to explore</span><i><b></b></i></a>
@@ -185,9 +187,16 @@
 
     <footer id="site-footer">
       <div class="wave" aria-hidden="true">
-        <svg class="wv wv1" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,70 Q300,10 600,70 T1200,70 T1800,70 T2400,70 V120 H0 Z"/></svg>
-        <svg class="wv wv2" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,66 Q150,14 300,66 T600,66 T900,66 T1200,66 T1500,66 T1800,66 T2100,66 T2400,66 V120 H0 Z"/></svg>
-        <svg class="wv wv3" viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="M0,88 Q100,48 200,88 T400,88 T600,88 T800,88 T1000,88 T1200,88 T1400,88 T1600,88 T1800,88 T2000,88 T2200,88 T2400,88 V120 H0 Z"/></svg>
+        <svg class="wv wv1" viewBox="0 0 2400 120" preserveAspectRatio="none">
+          <path d="M0,70 Q300,10 600,70 T1200,70 T1800,70 T2400,70 V120 H0 Z" />
+        </svg>
+        <svg class="wv wv2" viewBox="0 0 2400 120" preserveAspectRatio="none">
+          <path d="M0,66 Q150,14 300,66 T600,66 T900,66 T1200,66 T1500,66 T1800,66 T2100,66 T2400,66 V120 H0 Z" />
+        </svg>
+        <svg class="wv wv3" viewBox="0 0 2400 120" preserveAspectRatio="none">
+          <path
+            d="M0,88 Q100,48 200,88 T400,88 T600,88 T800,88 T1000,88 T1200,88 T1400,88 T1600,88 T1800,88 T2000,88 T2200,88 T2400,88 V120 H0 Z" />
+        </svg>
       </div>
       <div class="fgrid">
         <div class="fbrand"><img src="assets/logo.png" alt="CSSP logo">CSSP</div>
