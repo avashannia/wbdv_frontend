@@ -1,4 +1,3 @@
-/* CSSP script.js | vanilla JS, one section per feature */
 (function () {
   "use strict";
   var $ = function (s, c) {
@@ -193,7 +192,11 @@
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
   $("#toTop").onclick = function () {
-    scrollTo({ top: 0, behavior: "smooth" });
+    try {
+      scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      scrollTo(0, 0);
+    }
   };
 
   /* ---- Currency (base PHP) ---- */
@@ -428,8 +431,11 @@
         "#",
       ],
     };
+  var fabs = $(".fabs"),
+    hideT;
   function fmSet(o) {
     fm.classList.toggle("open", o);
+    fabs.classList.toggle("menu-open", o);
     $("#fmMain").setAttribute("aria-expanded", o);
     if (!o) {
       fi.classList.remove("show");
@@ -458,24 +464,77 @@
       if (e.pointerType === "mouse" && !pinned) bubble(b);
     };
     b.onpointerleave = function (e) {
-      if (e.pointerType === "mouse" && !pinned) fi.classList.remove("show");
+      if (e.pointerType === "mouse" && !pinned) {
+        clearTimeout(hideT);
+        hideT = setTimeout(function () {
+          fi.classList.remove("show");
+        }, 250);
+      }
     };
     b.onclick = function (e) {
       e.stopPropagation();
+      if (b.dataset.info === "share") {
+        fi.classList.remove("show");
+        pinned = null;
+        doShare();
+        return;
+      }
       pinned = b;
       bubble(b);
     };
   });
+  fi.onpointerenter = function () {
+    clearTimeout(hideT);
+  };
+  fi.onpointerleave = function (e) {
+    if (e.pointerType === "mouse" && !pinned) {
+      hideT = setTimeout(function () {
+        fi.classList.remove("show");
+      }, 250);
+    }
+  };
+  /* copy works on http too (clipboard API needs https/localhost, so fall back to execCommand) */
+  function copyText(t) {
+    if (navigator.clipboard && window.isSecureContext)
+      return navigator.clipboard.writeText(t);
+    return new Promise(function (ok, no) {
+      var ta = document.createElement("textarea");
+      ta.value = t;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:-100px;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy") ? ok() : no();
+      } catch (err) {
+        no(err);
+      }
+      ta.remove();
+    });
+  }
+  function copyLink(u) {
+    copyText(u).then(
+      function () {
+        toast("Link copied");
+      },
+      function () {
+        window.prompt("Copy this link:", u);
+      },
+    );
+  }
+  function doShare() {
+    var u = location.href.split("#")[0];
+    if (navigator.share) {
+      navigator.share({ title: document.title, url: u }).catch(function (err) {
+        if (!err || err.name !== "AbortError") copyLink(u);
+      });
+    } else copyLink(u);
+  }
   $("a", fi).onclick = function (e) {
     if (this.dataset.act !== "share") return;
     e.preventDefault();
-    var u = location.href.split("#")[0];
-    navigator.share
-      ? navigator.share({ title: document.title, url: u }).catch(function () {})
-      : navigator.clipboard &&
-        navigator.clipboard.writeText(u).then(function () {
-          toast("Link copied");
-        });
+    fmSet(false);
+    doShare();
   };
   document.addEventListener("click", function (e) {
     if (!e.target.closest("#fm,#finfo")) fmSet(false);
