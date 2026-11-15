@@ -21,6 +21,9 @@
   --muted: color-mix(in srgb, var(--ink) 68%, var(--bg));
   --hov: color-mix(in srgb, var(--ink) 10%, transparent);
 }
+:root {
+  --ext: clamp(70px, 10vw, 130px);
+}
 * {
   box-sizing: border-box;
 }
@@ -408,13 +411,13 @@ section {
   flex-direction: column;
   justify-content: flex-end;
   gap: 28px;
-  padding: 120px clamp(18px, 4vw, 48px) 110px;
+  padding: 120px clamp(18px, 4vw, 48px) clamp(18px, 3vh, 34px);
   color: #fff8e7;
-  overflow: hidden;
+  overflow-x: clip;
 }
 .hero video {
   position: absolute;
-  inset: 0;
+  inset: 0 0 calc(-1 * var(--ext)) 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -423,25 +426,17 @@ section {
   transition: filter 0.6s;
 }
 .hero::before,
+/* fade lives below the first screen, so it only shows once you scroll a little */
 .hero::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 1;
-}
-.hero::before {
-  inset: 0;
-  background: var(--ov);
-}
-.hero::after {
-  bottom: -1px;
-  height: 9%;
+  bottom: calc(-1 * var(--ext) - 1px);
+  height: calc(var(--ext) + 1px);
   background: linear-gradient(
     to bottom,
-    transparent,
-    color-mix(in srgb, var(--bg) 50%, transparent) 55%,
-    var(--bg)
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 10%, transparent) 25%,
+    color-mix(in srgb, var(--bg) 40%, transparent) 55%,
+    color-mix(in srgb, var(--bg) 82%, transparent) 85%,
+    var(--bg) 100%
   );
 }
 .hero > *:not(video) {
@@ -475,16 +470,16 @@ section {
   line-height: 0.78;
   margin-left: -0.04em;
 }
-.explore {
+.hero > .explore {
   position: absolute;
-  left: 50%;
-  bottom: 26px;
-  transform: translateX(-50%);
+  left: auto;
+  right: clamp(18px, 4vw, 48px);
+  bottom: clamp(18px, 3vh, 34px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: var(--ink);
+  color: #fff8e7;
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -516,6 +511,10 @@ section {
 }
 
 /* 1. STORY + STAT CARDS */
+.intro {
+  position: relative;
+  z-index: 2;
+}
 .intro h2 {
   max-width: 700px;
 }
@@ -1439,6 +1438,9 @@ footer {
   }
   .hero-top {
     max-width: 80%;
+  }
+  .hero > .explore {
+    display: none;
   }
 }
 @media (max-width: 380px) {
