@@ -170,19 +170,24 @@
     })
     .join(" ");
   var spans = $$("#fillText .w"),
+    fillEl = $("#fillText"),
     sec = $(".fill");
   function onScroll() {
     var h = root.scrollHeight - innerHeight;
     nav.classList.toggle("scrolled", scrollY > 10);
     $("#toTop").classList.toggle("show", scrollY > 500);
     $("#prog").style.width = (scrollY / h) * 100 + "%";
-    /* statement fill starts as soon as the first words enter (about 20% up the screen) */
+    /* statement: starts once the whole paragraph is on screen, first word first, and is fully lit with a short hold before it unpins */
     var r = sec.getBoundingClientRect(),
-      st = innerHeight * 0.8,
-      en = innerHeight * 0.9 - r.height,
+      pin =
+        r.height -
+        parseFloat(getComputedStyle(sec).paddingBottom) -
+        fillEl.offsetHeight,
+      st = innerHeight * 0.6,
+      en = innerHeight * 0.26 - pin * 0.8,
       k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
     spans.forEach(function (s, i) {
-      s.classList.toggle("on", i < Math.round(k * spans.length));
+      s.classList.toggle("on", i < Math.ceil(k * spans.length));
     });
     closeDD();
   }
