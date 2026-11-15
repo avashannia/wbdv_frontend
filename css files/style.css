@@ -4,7 +4,7 @@
   --fill: #0a2471;
   --on: #fff8e7;
   --vf: none;
-  --ov: rgba(10, 36, 113, 0.2);
+  --ov: rgba(10, 36, 113, 0.4);
   --hero-ink: #fff8e7;
   --hero-btn-bg: #fff8e7;
   --hero-btn-ink: #0a2471;
@@ -30,7 +30,8 @@
   --hov: color-mix(in srgb, var(--ink) 10%, transparent);
 }
 :root {
-  --ext: clamp(70px, 10vw, 130px);
+  --ext: clamp(100px, 16vh, 190px);
+  --zoom: 1;
 }
 * {
   box-sizing: border-box;
@@ -423,16 +424,32 @@ section {
   color: var(--hero-ink);
   transition: color 0.5s;
   overflow-x: clip;
+  margin-bottom: var(
+    --ext
+  ); /* space for the video tail + fade before the next section */
+}
+.hero > .hero-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% + var(--ext));
+  overflow: hidden;
+  z-index: 0;
 }
 .hero video {
   position: absolute;
-  inset: 0 0 calc(-1 * var(--ext)) 0;
+  inset: 0;
   width: 100%;
-  height: auto; /* was 100%, which cancelled the bottom extension, so no fade was visible */
+  height: 100%;
   object-fit: cover;
+  object-position: 60% 50%;
+  transform: scale(var(--zoom));
+  transform-origin: 60% 50%;
   filter: var(--vf);
-  z-index: 0;
-  transition: filter 0.6s;
+  transition:
+    filter 0.6s,
+    transform 0.4s;
 }
 .hero::before,
 /* fade lives below the first screen, so it only shows once you scroll a little */
@@ -448,7 +465,7 @@ section {
     var(--bg) 100%
   );
 }
-.hero > *:not(video) {
+.hero > *:not(.hero-media) {
   position: relative;
   z-index: 2;
 }
@@ -479,7 +496,6 @@ section {
   letter-spacing: -0.07em;
   line-height: 0.78;
   margin-left: -0.04em;
-  text-shadow: var(--hero-shadow);
 }
 .hero > .explore {
   position: absolute;
@@ -585,13 +601,13 @@ section {
 /* 2. SCROLL-FILL STATEMENT */
 .fill {
   padding-top: 0;
-  min-height: 170vh;
+  min-height: 150vh;
   display: grid;
   align-items: start;
 }
 .fill p {
   position: sticky;
-  top: 34vh;
+  top: 26vh;
   font-size: clamp(30px, 5vw, 68px);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -1056,7 +1072,7 @@ footer {
 .fabs {
   position: fixed;
   right: 22px;
-  bottom: 22px;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   z-index: 90;
   display: flex;
   flex-direction: column;
@@ -1207,6 +1223,7 @@ footer {
   position: relative;
   width: min(460px, 100%);
   max-height: 90vh;
+  max-height: 90dvh;
   overflow: auto;
   padding: 28px;
   border-radius: 24px;
@@ -1343,6 +1360,9 @@ footer {
 
 /* RESPONSIVE */
 @media (max-width: 991px) {
+  :root {
+    --zoom: 1.2;
+  }
   .burger,
   .only-m {
     display: grid;
@@ -1430,6 +1450,9 @@ footer {
   }
 }
 @media (max-width: 560px) {
+  :root {
+    --zoom: 1.45;
+  }
   .nav.scrolled {
     width: calc(100% - 20px);
   }
