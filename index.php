@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="./style.css">
-<link rel="stylesheet" href="./brand.css">
-<link rel="stylesheet" href="./theme.css">
+<link rel="stylesheet" href="./css files/style.css">
+<link rel="stylesheet" href="./css files/brand.css">
+<link rel="stylesheet" href="./css files/theme.css">
 </head>
 <body>
 <div class="prog" id="prog"></div>
@@ -163,7 +163,7 @@
 <div id="nameRow" hidden><label>Full name</label><input name="name"><div class="err"></div></div><label>Email</label><input name="email" type="email" required><div class="err"></div>
 <label>Password</label><input name="pw" type="password" minlength="6" required><div class="err"></div><button class="pill g" id="acctGo">Log in</button></form></div>
 <div class="ov sov" id="search"><div class="box"><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Search products</h3><input id="q" placeholder="Polo, uniform, pants..." autocomplete="off"><div class="sr" id="sr"></div></div></div>
-<script src="script.js"></script>
-<script src="catalog.js"></script>
+<script src="./js files/script.js"></script>
+<script src="./js files/catalog.js"></script>
 </body>
 </html>
