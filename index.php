@@ -17,7 +17,7 @@
   <ul class="menu" id="menu">
     <li class="dd"><button class="ddb" aria-expanded="false">Products <i class="fa-solid fa-chevron-down"></i></button>
       <div class="panel mega">
-        <div class="col"><h4>Uniforms</h4><div class="thumb"><i class="fa-solid fa-user-tie"></i></div><p>Maritime &amp; Culinary Uniforms</p><a class="pill" href="#preview">Gear Up</a></div>
+        <div class="col"><h4>Uniforms</h4><div class="thumb"><i class="fa-solid fa-user-tie"></i></div><p>Maritime &amp; Culinary Uniforms</p><a class="pill" href="#./trial.php">Gear Up</a></div>
         <div class="col"><h4>Safety Footwear</h4><div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div><p>Steel-toe Safety Shoe</p><a class="pill" href="#preview">Secure Step</a></div>
       </div></li>
     <li class="dd"><button class="ddb" aria-expanded="false">About Us <i class="fa-solid fa-chevron-down"></i></button>
