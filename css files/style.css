@@ -3,7 +3,7 @@
   --ink: #0a2471;
   --fill: #0a2471;
   --on: #fff8e7;
-  --vf: none;
+  --vf: grayscale(1) contrast(1.1);
   --ov: rgba(10, 36, 113, 0.4);
   --hero-ink: #fff8e7;
   --hero-btn-bg: #fff8e7;
@@ -452,7 +452,21 @@ section {
     transform 0.4s;
 }
 .hero::before,
-/* fade lives below the first screen, so it only shows once you scroll a little */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+/* color layer over the video (and over its tail below the first screen) */
+.hero::before {
+  top: 0;
+  bottom: calc(-1 * var(--ext));
+  background: var(--ov);
+}
+/* subtle fade into the next section's background; lives below the first screen, so it only shows once you scroll a little */
 .hero::after {
   bottom: calc(-1 * var(--ext) - 1px);
   height: calc(var(--ext) + 1px);
