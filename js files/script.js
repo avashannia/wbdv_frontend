@@ -85,7 +85,9 @@
     ["S", "Bath Towel", 320, "bath"],
     ["S", "Duffel Bag", 900, "bag-shopping"],
   ];
-  var FEATURED = [0, 6, 12, 18, 26, 42];
+  var SLIDES = [
+    0, 6, 12, 18, 26, 42, 2, 9, 15, 22, 30, 44,
+  ]; /* items shown in the marquee */
 
   /* ---- Theme (saved, respects system preference) ---- */
   function setTheme(t) {
@@ -172,7 +174,7 @@
     sec = $(".fill");
   function onScroll() {
     var h = root.scrollHeight - innerHeight;
-    nav.classList.toggle("scrolled", scrollY > 30);
+    nav.classList.toggle("scrolled", scrollY > 10);
     $("#toTop").classList.toggle("show", scrollY > 500);
     $("#prog").style.width = (scrollY / h) * 100 + "%";
     var r = sec.getBoundingClientRect(),
@@ -279,30 +281,25 @@
     }
   };
 
-  /* ---- Product preview cards (6 of 54) ---- */
-  $("#pgrid").innerHTML =
-    FEATURED.map(function (i) {
-      var p = P[i];
-      return (
-        '<article class="pk rv" data-price="' +
-        p[2] +
-        '"><div class="pk-img">' +
-        (p[4] ? '<span class="tagb">' + p[4] + "</span>" : "") +
-        '<i class="fa-solid fa-' +
-        p[3] +
-        '"></i></div><div class="pk-b"><span class="pk-c">' +
-        CAT[p[0]] +
-        '</span><span class="pk-n">' +
-        p[1] +
-        '</span><span class="price"></span><span class="stk">Stock Available</span><button class="pill" data-add="' +
-        i +
-        '"><i class="fa-solid fa-cart-shopping"></i> Add to cart</button></div></article>'
-      );
-    }).join("") +
-    '<article class="pk more rv"><b>+' +
-    (P.length - FEATURED.length) +
-    '</b><span>more items in 7 categories</span><button class="pill" data-open="quote">Request full catalog</button></article>';
-  $("#pgrid").onclick = function (e) {
+  /* ---- Product marquee. For real photos, add a path as the 6th value of an item, e.g. "assets/p1.jpg" ---- */
+  var tiles = SLIDES.map(function (i) {
+    var p = P[i];
+    return (
+      '<div class="mt" data-price="' +
+      p[2] +
+      '">' +
+      (p[5]
+        ? '<img src="' + p[5] + '" alt="' + p[1] + '" loading="lazy">'
+        : '<i class="fa-solid fa-' + p[3] + '"></i>') +
+      '<div class="cap"><b>' +
+      p[1] +
+      '</b><span class="price"></span><button class="pill" data-add="' +
+      i +
+      '">Add to cart</button></div></div>'
+    );
+  }).join("");
+  $("#mrq").innerHTML = '<div class="trk">' + tiles + tiles + "</div>";
+  $("#mrq").onclick = function (e) {
     var b = e.target.closest("[data-add]");
     if (b) add(+b.dataset.add);
   };
@@ -507,41 +504,63 @@
     $("#tagOut").textContent = this.value.toUpperCase() || "YOUR NAME";
   };
 
-  /* ---- Reveal on scroll, counters, chat sequence ---- */
+  /* ---- Reveal on scroll: animations replay every time a part re-enters the screen ---- */
+  var chatT = [];
+  function chatReset() {
+    chatT.forEach(clearTimeout);
+    chatT = [];
+    $$("#chat .msg").forEach(function (m) {
+      m.classList.remove("show");
+    });
+    $("#dots").classList.remove("on");
+  }
   function typeChat() {
+    chatReset();
     var m = $$("#chat .msg"),
       d = $("#dots");
     [0, 1, 2].forEach(function (i) {
-      setTimeout(function () {
-        m[i].classList.add("show");
-      }, i * 1100);
+      chatT.push(
+        setTimeout(function () {
+          m[i].classList.add("show");
+        }, i * 1100),
+      );
     });
-    setTimeout(function () {
-      d.classList.add("on");
-    }, 3400);
-    setTimeout(function () {
-      d.classList.remove("on");
-      m[3].classList.add("show");
-    }, 4800);
+    chatT.push(
+      setTimeout(function () {
+        d.classList.add("on");
+      }, 3400),
+    );
+    chatT.push(
+      setTimeout(function () {
+        d.classList.remove("on");
+        m[3].classList.add("show");
+      }, 4800),
+    );
+  }
+  function count(el, on) {
+    var id = (el._c = (el._c || 0) + 1);
+    if (!on) {
+      el.textContent = "0";
+      return;
+    }
+    var end = +el.dataset.count,
+      t0 = performance.now();
+    (function s(t) {
+      if (el._c !== id) return;
+      var k = Math.min((t - t0) / 1400, 1);
+      el.textContent =
+        Math.round(end * (1 - Math.pow(1 - k, 3))) + (el.dataset.suf || "");
+      if (k < 1) requestAnimationFrame(s);
+    })(t0);
   }
   var io = new IntersectionObserver(
     function (es) {
       es.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        var el = en.target;
-        io.unobserve(el);
-        if (el.id === "chat") return typeChat();
-        if (el.dataset.count) {
-          var end = +el.dataset.count,
-            t0 = performance.now();
-          (function s(t) {
-            var k = Math.min((t - t0) / 1400, 1);
-            el.textContent =
-              Math.round(end * (1 - Math.pow(1 - k, 3))) +
-              (el.dataset.suf || "");
-            if (k < 1) requestAnimationFrame(s);
-          })(t0);
-        } else el.classList.add("in");
+        var el = en.target,
+          on = en.isIntersecting;
+        if (el.id === "chat") return on ? typeChat() : chatReset();
+        if (el.dataset.count) return count(el, on);
+        el.classList.toggle("in", on);
       });
     },
     { threshold: 0.2 },
