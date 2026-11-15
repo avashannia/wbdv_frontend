@@ -7,3 +7,8 @@
           - hero area (a mess!)
           - color palette (better - dark mode)
 
+      websites that gave me a lot of inspo!
+          - https://dribbble.com/tags/website-design (5/10)
+          - https://bundui.io/ (8/10) 
+          - https://www.awwwards.com/ (9/10) //inspired 
+
