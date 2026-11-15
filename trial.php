@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CSSP Garments Trading</title>
+<title>OLD! CSSP Garments Trading</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="./css files/style.css">
-<link rel="stylesheet" href="./css files/brand.css">
-<link rel="stylesheet" href="./css files/theme.css">
+<link rel="stylesheet" href="./css files/trial_style.css">
+<link rel="stylesheet" href="./css files/trial_brand.css">
+<link rel="stylesheet" href="./css files/trial_theme.css">
 </head>
 <body>
 <div class="prog" id="prog"></div>
@@ -163,7 +163,7 @@
 <div id="nameRow" hidden><label>Full name</label><input name="name"><div class="err"></div></div><label>Email</label><input name="email" type="email" required><div class="err"></div>
 <label>Password</label><input name="pw" type="password" minlength="6" required><div class="err"></div><button class="pill g" id="acctGo">Log in</button></form></div>
 <div class="ov sov" id="search"><div class="box"><button type="button" class="ib x" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button><h3>Search products</h3><input id="q" placeholder="Polo, uniform, pants..." autocomplete="off"><div class="sr" id="sr"></div></div></div>
-<script src="./js files/script.js"></script>
-<script src="./js files/catalog.js"></script>
+<script src="./js files/trial_script.js"></script>
+<script src="./js files/trial_catalog.js"></script>
 </body>
 </html>
