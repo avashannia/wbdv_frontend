@@ -176,14 +176,11 @@
     nav.classList.toggle("scrolled", scrollY > 10);
     $("#toTop").classList.toggle("show", scrollY > 500);
     $("#prog").style.width = (scrollY / h) * 100 + "%";
+    /* statement fill starts as soon as the first words enter (about 20% up the screen) */
     var r = sec.getBoundingClientRect(),
-      k = Math.min(
-        Math.max(
-          (innerHeight * 0.6 - r.top) / (r.height - innerHeight * 0.3),
-          0,
-        ),
-        1,
-      );
+      st = innerHeight * 0.8,
+      en = innerHeight * 0.9 - r.height,
+      k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
     spans.forEach(function (s, i) {
       s.classList.toggle("on", i < Math.round(k * spans.length));
     });
