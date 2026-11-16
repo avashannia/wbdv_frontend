@@ -1,3 +1,4 @@
+/* CSSP script.js | vanilla JS, one section per feature */
 (function () {
   "use strict";
   var $ = function (s, c) {
@@ -179,10 +180,7 @@
     $("#prog").style.width = (scrollY / h) * 100 + "%";
     /* statement: starts once the whole paragraph is on screen, first word first, and is fully lit with a short hold before it unpins */
     var r = sec.getBoundingClientRect(),
-      pin =
-        r.height -
-        parseFloat(getComputedStyle(sec).paddingBottom) -
-        fillEl.offsetHeight,
+      pin = r.height - parseFloat(getComputedStyle(sec).paddingBottom) - fillEl.offsetHeight,
       st = innerHeight * 0.6,
       en = innerHeight * 0.26 - pin * 0.8,
       k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
@@ -527,9 +525,11 @@
   function doShare() {
     var u = location.href.split("#")[0];
     if (navigator.share) {
-      navigator.share({ title: document.title, url: u }).catch(function (err) {
-        if (!err || err.name !== "AbortError") copyLink(u);
-      });
+      navigator
+        .share({ title: document.title, url: u })
+        .catch(function (err) {
+          if (!err || err.name !== "AbortError") copyLink(u);
+        });
     } else copyLink(u);
   }
   $("a", fi).onclick = function (e) {
@@ -630,6 +630,39 @@
     el.style.setProperty("--i", i % 4);
     io.observe(el);
   });
+
+  /* ---- What we do: click a service, the number rolls and the picture wipes in ---- */
+  var svcGrid = $("#svcGrid");
+  if (svcGrid) {
+    var svcItems = $$(".svc-item", svcGrid),
+      svcImgs = $$(".svc-img", svcGrid),
+      svcCur = 0,
+      svcT;
+    var svcPick = function (i) {
+      if (i === svcCur) return;
+      svcImgs[svcCur].classList.remove("on");
+      svcImgs[svcCur].classList.add("prev");
+      svcImgs[i].classList.remove("prev");
+      svcImgs[i].classList.add("on");
+      svcCur = i;
+      clearTimeout(svcT);
+      svcT = setTimeout(function () {
+        svcImgs.forEach(function (m, k) {
+          if (k !== svcCur) m.classList.remove("prev");
+        });
+      }, 900);
+      svcItems.forEach(function (it, k) {
+        it.classList.toggle("on", k === i);
+        $(".svc-b", it).setAttribute("aria-expanded", k === i);
+      });
+      svcGrid.style.setProperty("--svc", i);
+    };
+    svcItems.forEach(function (it, i) {
+      $(".svc-b", it).onclick = function () {
+        svcPick(i);
+      };
+    });
+  }
 
   renderPrices();
 })();
