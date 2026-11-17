@@ -20,7 +20,7 @@
               <div class="col">
                 <h4>Uniforms</h4>
                 <div class="thumb"><i class="fa-solid fa-user-tie"></i></div>
-                <p>Maritime &amp; Culinary Uniforms</p><a class="pill" href="#preview">Gear Up</a>
+                <p>Maritime &amp; Culinary Uniforms</p><a class="pill" ="#preview" href="./trial.php">Gear Up</a>
               </div>
               <div class="col">
                 <h4>Safety Footwear</h4>
