@@ -26,7 +26,7 @@
               <div class="col">
                 <h4>Safety Footwear</h4>
                 <div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div>
-                <p>Steel-toe Safety Shoe</p><a class="pill" href="#preview">Secure Step</a>
+                <p>Steel-toe Safety Shoe</p><a class="pill" href="#./new_index.php">Secure Step</a>
               </div>
             </div>
           </li>
