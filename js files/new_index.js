@@ -1,4 +1,3 @@
-/* CSSP script.js | vanilla JS, one section per feature */
 (function () {
   "use strict";
   var $ = function (s, c) {
@@ -173,14 +172,15 @@
         .forEach(function (w) {
           fillParts.push('<span class="w">' + w + "</span>");
         });
-    else
-      fillParts.push(
-        nd.outerHTML,
-      ); /* inline chips stay, and light up with the words */
+    else if (nd.nodeType === 1) {
+      nd.classList.add("w"); /* image chips fade in with the words */
+      fillParts.push(nd.outerHTML);
+    }
   });
   $("#fillText").innerHTML = fillParts.join(" ");
   var spans = $$("#fillText .w"),
     fillEl = $("#fillText"),
+    fillIn = $(".fill-in"),
     sec = $(".fill");
   function onScroll() {
     var h = root.scrollHeight - innerHeight;
@@ -192,13 +192,14 @@
       pin =
         r.height -
         parseFloat(getComputedStyle(sec).paddingBottom) -
-        fillEl.offsetHeight,
-      st = innerHeight * 0.6,
+        fillIn.offsetHeight,
+      st = innerHeight * 0.7,
       en = innerHeight * 0.26 - pin * 0.8,
       k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
     spans.forEach(function (s, i) {
       s.classList.toggle("on", i < Math.ceil(k * spans.length));
     });
+    fillIn.classList.toggle("done", k >= 0.98);
     closeDD();
   }
   addEventListener("scroll", onScroll, { passive: true });
@@ -679,9 +680,6 @@
       hi = $(".hi"),
       lines = $$(".hi .ln > span"),
       hiRest = $$(".hi-sub,.hi-cta"),
-      fTop = $(".hero-top"),
-      wm = $(".wm"),
-      stks = $$(".stk"),
       expl = $(".explore"),
       reduce = matchMedia("(prefers-reduced-motion: reduce)").matches,
       vw,
@@ -703,13 +701,6 @@
       return t < 0.5
         ? 4 * t * t * t
         : 1 - Math.pow(-2 * t + 2, 3) / 2; /* cubic-bezier(.65,0,.35,1) */
-    }
-    function navSync(p) {
-      var on = reduce
-        ? scrollY < vh - 84
-        : p > 0.3 &&
-          run - scrollY > 84; /* card (not the sheet) is behind the nav */
-      nav.classList.toggle("on-video", on);
     }
     function render(p) {
       var t = ease(seg(p, 0, 0.32)),
@@ -758,27 +749,10 @@
         e.style.opacity = (1 - ex).toFixed(3);
       });
       hi.style.visibility = ex >= 1 ? "hidden" : "visible";
-      fTop.style.opacity = u.toFixed(3);
-      fTop.style.transform = "translateY(" + (40 * (1 - u)).toFixed(1) + "px)";
-      wm.style.transform = "translateY(" + (112 * (1 - u)).toFixed(1) + "%)";
-      var sf = seg(p, 0.34, 0.5) * (1 - seg(p, 0.86, 1));
-      stks.forEach(function (s, i) {
-        var sp = parseFloat(s.dataset.speed || 1) * (small ? 0.5 : 1);
-        s.style.opacity = sf.toFixed(3);
-        s.style.transform =
-          "translateY(" +
-          (-z * vh * 0.55 * sp + (1 - sf) * 30).toFixed(1) +
-          "px) rotate(" +
-          ((i % 2 ? 1 : -1) * (8 + z * 14)).toFixed(1) +
-          "deg) scale(" +
-          (0.6 + 0.4 * sf).toFixed(3) +
-          ")";
-      });
       expl.style.opacity = (
         seg(p, 0.3, 0.42) *
         (1 - seg(p, 0.52, 0.64))
       ).toFixed(3);
-      navSync(p);
     }
     function tick() {
       cur += (tgt - cur) * 0.16;
@@ -813,15 +787,7 @@
     }
     geo();
     addEventListener("resize", geo);
-    if (reduce)
-      addEventListener(
-        "scroll",
-        function () {
-          navSync(0.5);
-        },
-        { passive: true },
-      );
-    else addEventListener("scroll", kick, { passive: true });
+    if (!reduce) addEventListener("scroll", kick, { passive: true });
   })();
 
   /* ---- What we do: click a service, the number rolls and the picture wipes in ---- */
@@ -856,6 +822,17 @@
       };
     });
   }
+
+  /* ---- Four checks: pinned title height, so the stacking cards sit right under it ---- */
+  var craftEl = $("#craft"),
+    craftHead = $(".craft-head");
+  function craftSync() {
+    if (craftEl && craftHead)
+      craftEl.style.setProperty("--ch", craftHead.offsetHeight + "px");
+  }
+  craftSync();
+  addEventListener("resize", craftSync);
+  addEventListener("load", craftSync);
 
   renderPrices();
 })();
