@@ -18,7 +18,7 @@
   --sh: 0 14px 40px rgba(15, 61, 44, 0.2);
 }
 :root[data-theme="dark"] {
-  --bg: #040f0a;
+  --bg: #012210;/* 040f0a;*/
   --ink: #ebe6d5;
   --fill: #0b2a1e;
   --accent: #34d27b;
