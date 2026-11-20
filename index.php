@@ -8,45 +8,17 @@
   <script src="./js files/site_state.js?v=1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="./css files/style.css?v=5">
+  <link rel="stylesheet" href="./css files/style.css?v=6">
 </head>
     <body>
         <div class="prog" id="prog"></div>
         <nav class="nav" id="nav" aria-label="Main">
-            <a class="brand" href="#top" aria-label="CSSP home"><img src="assets/logo.png" alt="">CSSP</a>
+            <a class="brand" href="./index.php#top" aria-label="CSSP home"><img src="assets/logo.png" alt="">CSSP</a>
             <ul class="menu" id="menu">
-            <li class="dd"><button class="ddb" aria-expanded="false">Products <i
-                    class="fa-solid fa-chevron-down"></i></button>
-                <div class="panel mega">
-                <div class="col">
-                    <h4>Uniforms</h4>
-                    <div class="thumb"><i class="fa-solid fa-user-tie"></i></div>
-                    <p>Maritime &amp; Culinary Uniforms</p><a class="pill" href="./trial.php">Gear Up</a>
-                </div>
-                <div class="col">
-                    <h4>Safety Footwear</h4>
-                    <div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div>
-                    <p>Steel-toe Safety Shoe</p><a class="pill" href="#preview">Secure Step</a>
-                </div>
-                </div>
-            </li>
-            <li class="dd"><button class="ddb" aria-expanded="false">About Us <i
-                    class="fa-solid fa-chevron-down"></i></button>
-                <div class="panel cols">
-                <div class="col">
-                    <h4>Company</h4><a href="#story"><i class="fa-solid fa-anchor"></i>Our Story</a><a href="#craft"><i
-                        class="fa-solid fa-people-group"></i>Our Craft</a><a href="#contact"><i
-                        class="fa-solid fa-house"></i>Location</a>
-                </div>
-                <div class="col">
-                    <h4>Support</h4><a href="#support"><i class="fa-solid fa-circle-question"></i>FAQ</a><a href="#contact"><i
-                        class="fa-solid fa-envelope"></i>Contact Us</a><a href="#site-footer"><i
-                        class="fa-solid fa-file-lines"></i>Policies</a>
-                </div>
-                </div>
-            </li>
-            <li class="only-m"><button class="ddb" data-open="account"><span><i class="fa-solid fa-circle-user"></i>&nbsp;
-                    Account</span></button></li>
+            <li><a class="ddb" href="./index.php#top" aria-current="page">Home</a></li>
+            <li><a class="ddb" href="./products.php">Products</a></li>
+            <li><a class="ddb" href="./aboutus.php">About Us</a></li>
+            <li class="only-m"><a class="ddb" href="./products.php?auth=login"><i class="fa-solid fa-circle-user"></i>&nbsp; Account</a></li>
             <li class="only-m"><button class="ddb" data-open="search"><span><i class="fa-solid fa-magnifying-glass"></i>&nbsp;
                     Search</span></button></li>
             </ul>
@@ -59,8 +31,8 @@
             <button class="ib" id="cartBtn" aria-label="Open cart"><i class="fa-solid fa-cart-shopping"></i><span
                 class="badge-c" id="cartCount">0</span></button>
             <button class="ib" id="searchBtn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <button class="ib" id="acct" data-open="account" aria-label="Account"><i
-                class="fa-solid fa-circle-user"></i></button>
+            <a class="ib" id="acct" href="./products.php?auth=login" aria-label="Log in to your account"><i
+                class="fa-solid fa-circle-user"></i></a>
             <button class="ib" id="tg" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
             <button class="pill" data-open="quote">Get a Quote</button>
             <button class="ib burger" id="burger" aria-label="Menu" aria-expanded="false"><i
@@ -188,7 +160,7 @@
                 <div>
                 <h3>Seam strength</h3>
                 <p>Pull-tested at stress points: shoulders, crotch, underarm and pockets.</p><a class="pill o"
-                    href="#preview">See the line-up</a>
+                    href="./products.php">See the line-up</a>
                 </div>
                 <div class="vis"><label>Seam pull strength <span>96%</span></label>
                 <div class="bar" style="--w:96%"><i></i></div><label>Stitch density <span>92%</span></label>
@@ -200,7 +172,7 @@
                 <div>
                 <h3>Fabric durability</h3>
                 <p>Colour, shrinkage and abrasion checked across repeated industrial washes.</p><a class="pill o"
-                    href="#preview">See the line-up</a>
+                    href="./products.php">See the line-up</a>
                 </div>
                 <div class="vis"><label>Colour after 40 washes <span>94%</span></label>
                 <div class="bar" style="--w:94%"><i></i></div><label>Shrinkage control <span>97%</span></label>
@@ -275,7 +247,7 @@
             <div class="fgrid">
             <div class="fbrand"><img src="assets/logo.png" alt="CSSP logo">CSSP</div>
             <div>
-                <h4>Navigation</h4><a href="#story">Story</a><a href="#craft">Craft</a><a href="#preview">Products</a>
+                <h4>Navigation</h4><a href="./index.php#top">Home</a><a href="./products.php">Products</a><a href="./aboutus.php">About Us</a>
             </div>
             <div>
                 <h4>Connect</h4><a href="#">Facebook</a><a href="#">Instagram</a><a href="#">LinkedIn</a>
@@ -346,19 +318,6 @@
                 request</button>
             </form>
         </div>
-        <div class="ov" id="account">
-            <form class="box" novalidate><button type="button" class="ib x" data-close aria-label="Close"><i
-                class="fa-solid fa-xmark"></i></button>
-            <div class="tabs"><button type="button" class="on" data-tab="in">Log in</button><button type="button"
-                data-tab="up">Create account</button></div>
-            <div id="nameRow" hidden><label>Full name</label><input name="name">
-                <div class="err"></div>
-            </div><label>Email</label><input name="email" type="email" required>
-            <div class="err"></div>
-            <label>Password</label><input name="pw" type="password" minlength="6" required>
-            <div class="err"></div><button class="pill" id="acctGo">Log in</button>
-            </form>
-        </div>
         <div class="ov sov" id="search">
             <div class="box"><button type="button" class="ib x" data-close aria-label="Close"><i
                 class="fa-solid fa-xmark"></i></button>
@@ -366,6 +325,6 @@
             <div class="sr" id="sr"></div>
             </div>
         </div>
-        <script src="./js files/script.js?v=4"></script>
+        <script src="./js files/script.js?v=5"></script>
     </body>
 </html>

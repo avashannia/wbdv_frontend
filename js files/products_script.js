@@ -116,7 +116,7 @@
     setMenu(!menu.classList.contains("open"));
   });
 
-  $$(".panel a").forEach(function (link) {
+  $$(".menu a").forEach(function (link) {
     link.addEventListener("click", function () {
       closeDropdowns();
       setMenu(false);
@@ -594,8 +594,12 @@
       sessionUser = data.authenticated ? data.user : null;
       csrfToken = data.csrf_token || "";
       updateAccountUI();
-      if (new URLSearchParams(window.location.search).get("auth") === "required" && !sessionUser) {
-        $("#accountMessage").textContent = "Please log in with an administrator account to open the dashboard.";
+      var authMode = new URLSearchParams(window.location.search).get("auth");
+      if (authMode === "login" || (authMode === "required" && !sessionUser)) {
+        $("#accountMessage").textContent =
+          authMode === "required"
+            ? "Please log in with an administrator account to open the dashboard."
+            : "";
         setAccountMode("login");
         openOverlay($("#account"));
       }
@@ -949,7 +953,14 @@
       updateAccountUI();
       this.reset();
       setAccountMode("login");
-      if (pendingCheckout) {
+      if (new URLSearchParams(window.location.search).get("auth") === "required") {
+        if (sessionUser.role === "owner" || sessionUser.role === "admin") {
+          window.location.href = "./dashboard.php";
+          return;
+        }
+        message.textContent =
+          "You are signed in, but dashboard access is restricted to administrator accounts.";
+      } else if (pendingCheckout) {
         pendingCheckout = false;
         closeOverlays();
         openCheckout();

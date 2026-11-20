@@ -151,7 +151,7 @@
     e.stopPropagation();
     setMenu(!menu.classList.contains("open"));
   };
-  $$(".panel a").forEach(function (a) {
+  $$(".menu a").forEach(function (a) {
     a.addEventListener("click", function () {
       closeDD();
       setMenu(false);
@@ -456,26 +456,15 @@
     });
     return ok;
   }
-  $$("form.box").forEach(function (f) {
-    f.onsubmit = function (e) {
-      e.preventDefault();
-      if (validate(f)) {
-        toast(f.closest("#quote") ? "Quote request sent!" : "Welcome to CSSP!");
-        f.reset();
-        closeAll();
-      }
-    };
-  });
-  $$("[data-tab]").forEach(function (t) {
-    t.onclick = function () {
-      $$("[data-tab]").forEach(function (x) {
-        x.classList.toggle("on", x === t);
-      });
-      $("#nameRow").hidden = t.dataset.tab === "in";
-      $("#acctGo").textContent =
-        t.dataset.tab === "in" ? "Log in" : "Create account";
-    };
-  });
+  $("#quote form").onsubmit = function (e) {
+    e.preventDefault();
+    var form = this;
+    if (validate(form)) {
+      toast("Quote request sent!");
+      form.reset();
+      closeAll();
+    }
+  };
 
   /* ---- Floating contact buttons with chat bubble beside the tapped button ---- */
   var fm = $("#fm"),
