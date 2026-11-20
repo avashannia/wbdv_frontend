@@ -4,19 +4,16 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CSSP Garments Trading</title>
+        <title>Products | CSSP Garments Trading</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
+        <script src="./js files/site_state.js?v=1"></script>
         <link rel="icon" type="image/x-icon" href="./assets/logo.png">
         <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-        <link rel="preconnect" href="https://googleapis.com">
-        <link rel="preconnect" href="https://gstatic.com" crossorigin>
-        <link href="https://googleapis.com/css2?family=Six+Caps&display=swap" rel="stylesheet">
-
-        <link rel="stylesheet" href="./css files/products_style.css?v=2">
-        <link rel="stylesheet" href="./css files/style.css?v=2">
+        <link rel="stylesheet" href="./css files/products_style.css?v=13">
+        <link rel="stylesheet" href="./css files/style.css?v=5">
 
         <!-- ===== FontAwesome for icons ===== -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -24,7 +21,7 @@
         <script src="https://kit.fontawesome.com/493ae0299a.js" crossorigin="anonymous"></script>
         
     </head>
-    <body>
+    <body class="products-page">
     
         <!-- ===== HEADER / NAVIGATION ===== -->
         <div class="prog" id="prog">
@@ -38,13 +35,13 @@
                                 <h4>Uniforms</h4>
                                 <div class="thumb"><i class="fa-solid fa-user-tie"></i></div>
                                 <p>Maritime &amp; Culinary Uniforms</p>
-                                <a class="pill" href="./trial.php">Gear Up</a>
+                                <a class="pill" href="./products.php#uniforms">Gear Up</a>
                             </div>
                             <div class="col">
                                 <h4>Safety Footwear</h4>
                                 <div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div>
                                 <p>Steel-toe Safety Shoe</p>
-                                <a class="pill" href="#preview">Secure Step</a>
+                                <a class="pill" href="./products.php#safety-footwears">Secure Step</a>
                             </div>
                         </div>
                     </li>
@@ -53,15 +50,15 @@
                         <div class="panel cols">
                             <div class="col">
                                 <h4>Company</h4>
-                                <a href="#story"><i class="fa-solid fa-anchor"></i>Our Story</a>
-                                <a href="#craft"><i class="fa-solid fa-people-group"></i>Our Craft</a>
-                                <a href="#contact"><i class="fa-solid fa-house"></i>Location</a>
+                                <a href="./index.php#story"><i class="fa-solid fa-anchor"></i>Our Story</a>
+                                <a href="./index.php#craft"><i class="fa-solid fa-people-group"></i>Our Craft</a>
+                                <a href="./index.php#contact"><i class="fa-solid fa-house"></i>Location</a>
                             </div>
                             <div class="col">
                                 <h4>Support</h4>
-                                <a href="#support"><i class="fa-solid fa-circle-question"></i>FAQ</a>
-                                <a href="#contact"><i class="fa-solid fa-envelope"></i>Contact Us</a>
-                                <a href="#site-footer"><i class="fa-solid fa-file-lines"></i>Policies</a>
+                                <a href="./index.php#support"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+                                <a href="./index.php#contact"><i class="fa-solid fa-envelope"></i>Contact Us</a>
+                                <a href="./index.php#site-footer"><i class="fa-solid fa-file-lines"></i>Policies</a>
                             </div>
                         </div>
                     </li>
@@ -91,14 +88,19 @@
         </div>
 
         <!-- ===== HERO SECTION ===== -->
-        <section class="hero-product">
+        <section class="hero-product" id="top">
+            <div class="hero-product-media" aria-hidden="true">
+                <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+                    <source src="assets/bgvideo.mp4" type="video/mp4">
+                </video>
+            </div>
             <div class="hero-content">
                 <span class="hero-label-product">TESTED BY THE OCEAN</span>
-                <h1 class="hero-title hero-cutout-text">
-                Chosen for <span>Excellence</span>
+                <h1 class="hero-title hero-title-product">
+                    Chosen for <span>Excellence</span>
                 </h1>
                 <p class="hero-desc-product">
-                Choose gear that works as hard as you do. Our seaman clothing is carefully crafted to deliver unmatched comfort, lasting durability, and reliable performance because at sea, every detail matters.
+                    Choose gear that works as hard as you do. Our seaman clothing is carefully crafted to deliver unmatched comfort, lasting durability, and reliable performance because at sea, every detail matters.
                 </p>
             </div>
         </section>
@@ -112,6 +114,7 @@
 
             <div class="product-grid-product">
                 <div class="product-card" 
+                    data-sku="UNI-PR1"
                     data-type="Uniforms"
                     data-name="Coveralls (Royal Blue)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Coverall.png"
@@ -143,6 +146,7 @@
                 </div> 
 
                 <div class="product-card" 
+                    data-sku="UNI-PR2"
                     data-type="Uniforms"
                     data-name="Coveralls (Orange)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Coverall.png"
@@ -174,6 +178,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR3"
                     data-type="Uniforms"
                     data-name="Coveralls (Khaki)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Coverall.png"
@@ -205,6 +210,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR4"
                     data-type="Uniforms"
                     data-name="Chef's Polo Long Sleeve (Ver. 1)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Top (Long Sleeve).png"
@@ -236,6 +242,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR5"
                     data-type="Uniforms"
                     data-name="Chef's Polo Long Sleeve (Ver. 2)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Top (Long Sleeve).png"
@@ -267,6 +274,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR6"
                     data-type="Uniforms"
                     data-name="Kitchen Crew Polo"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Top (Short Sleeve).png"
@@ -298,6 +306,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR7"
                     data-type="Uniforms"
                     data-name="Chef's Pants"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Pants.png"
@@ -329,6 +338,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR8"
                     data-type="Uniforms"
                     data-name="Kitchen Crew Checkered Pants"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Pants.png"
@@ -360,6 +370,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR9"
                     data-type="Uniforms"
                     data-name="Winter Jacket"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Jackets.png"
@@ -391,6 +402,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="UNI-PR10"
                     data-type="Uniforms"
                     data-name="Ordinary Jacket"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Jackets.png"
@@ -431,6 +443,7 @@
 
             <div class="product-grid-product">
                 <div class="product-card"
+                    data-sku="SHO-PR1"
                     data-type="Shoes"
                     data-name="MG Safety (High Cut)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Shoes.png"
@@ -462,6 +475,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="SHO-PR2"
                     data-type="Shoes"
                     data-name="Rockwinner (Low Cut)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Shoes.png"
@@ -493,6 +507,7 @@
                 </div> 
 
                 <div class="product-card"
+                    data-sku="SHO-PR3"
                     data-type="Shoes"
                     data-name="MG Safety (Low Cut)"
                     data-extra1="Assets/Products/Modal/SizeGuide-Front and Back-Shoes.png"
@@ -535,14 +550,14 @@
             <div class="fgrid">
                 <div class="fbrand"><img src="assets/logo.png" alt="CSSP logo">CSSP</div>
                 <div>
-                    <h4>Navigation</h4><a href="#story">Story</a><a href="#craft">Craft</a><a href="#preview">Products</a>
+                    <h4>Navigation</h4><a href="./index.php#story">Story</a><a href="./index.php#craft">Craft</a><a href="./products.php#uniforms">Products</a>
                 </div>
                 <div>
                     <h4>Connect</h4><a href="#">Facebook</a><a href="#">Instagram</a><a href="#">LinkedIn</a>
                 </div>
                 <div>
                     <h4>Contact</h4><a href="tel:+639000000000">+63 900 000 0000</a><a
-                    href="mailto:hello@example.com">hello@example.com</a><a href="#support">Support</a>
+                    href="mailto:hello@example.com">hello@example.com</a><a href="./index.php#support">Support</a>
                 </div>
             </div>
             <div class="legal"><span>© 2026 CSSP Garments Trading</span><span>Privacy · Terms</span></div>
@@ -586,12 +601,22 @@
       
         <div class="finfo" id="finfo" aria-live="polite"><b></b><span></span><a href="#"></a></div>
 
-        <aside class="drawer" id="drawer" aria-label="Cart">
-        <h3>Your cart</h3>
-            <div id="cartList"></div>
+        <aside class="drawer" id="drawer" aria-label="Cart" aria-hidden="true">
+            <div class="drawer-heading">
+                <div>
+                    <span class="drawer-kicker">YOUR SELECTION</span>
+                    <h3>Your cart</h3>
+                </div>
+                <button class="ib" type="button" data-close aria-label="Close cart">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="cartList" aria-live="polite"></div>
             <div class="tot"><span>Total</span><span id="cartTot"></span></div>
-            <button class="pill" data-open="quote">Request a Quote</button>
-            <button class="pill o" data-close style="margin-top:8px">Close</button>
+            <p class="cart-rate-note">Currency conversions are indicative; CSSP will confirm final pricing and delivery costs.</p>
+            <button class="pill" type="button" data-checkout>Proceed to checkout</button>
+            <button class="pill o" type="button" data-open="quote">Request a Quote</button>
+            <button class="pill o" type="button" data-cart-clear>Clear cart</button>
         </aside>
 
         <div class="ov" id="quote">
@@ -618,22 +643,32 @@
         </div>
 
         <div class="ov" id="account">
-            <form class="box" novalidate>
+            <form class="box" id="accountForm" novalidate>
                 <button type="button" class="ib x" data-close aria-label="Close">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <div class="tabs">
-                    <button type="button" class="on" data-tab="in">Log in</button>
-                    <button type="button" data-tab="up">Create account</button>
-                </div>
-                <div id="nameRow" hidden><label>Full name</label><input name="name">
+                <h3>CSSP account</h3>
+                <p class="account-message" id="accountMessage" aria-live="polite"></p>
+                <div id="accountFields">
+                    <div class="tabs">
+                        <button type="button" class="on" data-tab="in">Log in</button>
+                        <button type="button" data-tab="up">Create account</button>
+                    </div>
+                    <div id="nameRow" hidden><label>Full name</label><input name="full_name" autocomplete="name">
+                        <div class="err"></div>
+                    </div>
+                    <label>Email</label><input name="email" type="email" autocomplete="email" required>
                     <div class="err"></div>
+                    <label>Password</label><input name="password" type="password" minlength="8" autocomplete="current-password" required>
+                    <div class="err"></div>
+                    <button class="pill" id="acctGo">Log in</button>
                 </div>
-                <label>Email</label><input name="email" type="email" required>
-                <div class="err"></div>
-                <label>Password</label><input name="pw" type="password" minlength="6" required>
-                <div class="err"></div>
-                <button class="pill" id="acctGo">Log in</button>
+                <div class="account-session" id="accountSession" hidden>
+                    <b id="accountUserName"></b>
+                    <span id="accountUserEmail"></span>
+                    <a class="pill o" id="adminDashboard" href="./dashboard.php" hidden>Open admin dashboard</a>
+                    <button class="pill o" id="logoutBtn" type="button">Sign out</button>
+                </div>
             </form>
         </div>
       
@@ -649,18 +684,107 @@
             </div>
         </div>
 
+        <div class="ov" id="productOptions">
+            <form class="box product-detail-dialog" id="productOptionsForm" novalidate>
+                <button type="button" class="ib x" data-close aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="product-detail-layout">
+                    <div class="product-gallery">
+                        <div class="product-gallery-stage">
+                            <img id="productDetailImage" alt="">
+                            <span class="product-gallery-fallback" id="productGalleryFallback" hidden>
+                                <i class="fa-solid fa-shirt" aria-hidden="true"></i>
+                            </span>
+                            <button class="gallery-arrow previous" type="button" data-gallery-step="-1" aria-label="Previous product view">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button class="gallery-arrow next" type="button" data-gallery-step="1" aria-label="Next product view">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <span class="gallery-caption" id="galleryCaption">Front view</span>
+                    </div>
+                    <div class="product-detail-content">
+                        <span class="drawer-kicker" id="productDetailCategory"></span>
+                        <h3 id="productOptionsName">Product name</h3>
+                        <strong class="product-detail-price" id="productDetailPrice"></strong>
+                        <p class="product-detail-stock"><i class="fa-solid fa-circle-check"></i> Stock availability is confirmed when your order is submitted.</p>
+
+                        <div class="detail-block">
+                            <h4>Materials</h4>
+                            <div class="material-chips" id="productMaterials"></div>
+                        </div>
+
+                        <div class="detail-block">
+                            <div class="size-heading">
+                                <h4>Choose a size</h4>
+                                <span id="selectedSizeLabel">Select one to continue</span>
+                            </div>
+                            <div class="size-choice-list" id="productSizeChoices" role="group" aria-label="Available sizes"></div>
+                            <div class="size-reference">
+                                <h4>Size reference</h4>
+                                <div class="size-reference-table-wrap">
+                                    <table class="size-reference-table">
+                                        <thead id="sizeReferenceHead"></thead>
+                                        <tbody id="sizeReferenceBody"></tbody>
+                                    </table>
+                                </div>
+                                <p class="size-reference-note" id="uniformSizeNote" hidden>All garment measurements are in centimeters. If you are between sizes, contact CSSP before ordering.</p>
+                            </div>
+                        </div>
+
+                        <div class="product-order-row">
+                            <label for="productQuantity">Quantity</label>
+                            <input id="productQuantity" name="quantity" type="number" min="1" max="999" step="1" value="1" required>
+                            <button class="pill" type="submit"><i class="fa-solid fa-cart-plus"></i> Add to cart</button>
+                        </div>
+                        <div class="err" id="productOptionsError" aria-live="polite"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="ov" id="checkout">
+            <form class="box checkout-form" id="checkoutForm" novalidate>
+                <button type="button" class="ib x" data-close aria-label="Close checkout">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <span class="drawer-kicker">SECURE CHECKOUT</span>
+                <h3>Delivery details</h3>
+                <p class="checkout-account" id="checkoutAccount"></p>
+                <label for="checkoutPhone">Phone number</label>
+                <input id="checkoutPhone" name="phone" type="tel" autocomplete="tel" required>
+                <div class="err"></div>
+                <label for="checkoutAddress">Street address</label>
+                <textarea id="checkoutAddress" name="address" rows="3" autocomplete="street-address" required></textarea>
+                <div class="err"></div>
+                <div class="checkout-location-row">
+                    <div>
+                        <label for="checkoutCity">City / municipality</label>
+                        <input id="checkoutCity" name="city" autocomplete="address-level2" required>
+                        <div class="err"></div>
+                    </div>
+                    <div>
+                        <label for="checkoutPostal">Postal code</label>
+                        <input id="checkoutPostal" name="postal_code" autocomplete="postal-code" required>
+                        <div class="err"></div>
+                    </div>
+                </div>
+                <label for="checkoutNotes">Order notes <span>(optional)</span></label>
+                <textarea id="checkoutNotes" name="notes" rows="2"></textarea>
+                <div class="checkout-summary">
+                    <span>Items subtotal</span><strong id="checkoutSubtotal"></strong>
+                    <small>Delivery cost will be confirmed by CSSP before fulfillment.</small>
+                </div>
+                <div class="err checkout-error" id="checkoutError" aria-live="polite"></div>
+                <button class="pill" type="submit"><i class="fa-solid fa-lock"></i> Place order</button>
+            </form>
+        </div>
+
         <div id="toastContainer"></div>
 
-        <div class="success-modal" id="successModal">
-            <div class="success-box">
-                <i class="fa-solid fa-circle-check"></i>
-                <p>All aboard! Your product has joined your cart.</p>
-            </div>
-        </div>
-    
-        <script src="js files/products_script.js"></script>
-        <script src="js files/script.js"></script>
-        <script src="js files/aboutus_script.js"></script>
+        <script src="js files/products_script.js?v=13"></script>
             
     </body>
 </html>

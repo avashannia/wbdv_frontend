@@ -78,15 +78,13 @@
 
   /* ---------- theme ---------- */
   var root = document.documentElement;
-  try { root.setAttribute("data-theme", localStorage.getItem("cssp-dash-theme") || "light"); } catch (e) {}
   $("#themeBtn").onclick = function () {
     var t = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", t);
-    try { localStorage.setItem("cssp-dash-theme", t); } catch (e) {}
+    window.CSSPSiteState.setTheme(t);
   };
 
   /* ---------- navigation ---------- */
-  var TITLES = { overview: "People & Access", accounts: "User Accounts & Logs", products: "Product Workspace" };
+  var TITLES = { overview: "People & Access", accounts: "User Accounts & Logs", products: "Product Workspace", orders: "Customer Orders" };
   var tab = "users";
   function go(view) {
     $$(".view").forEach(function (v) { v.classList.toggle("on", v.id === "v-" + view); });
@@ -95,6 +93,7 @@
     $("#side").classList.remove("open"); $("#scrim").classList.remove("on");
     window.scrollTo(0, 0);
     render();
+    if (view === "orders") loadOrders();
   }
   $("#sideNav").onclick = function (e) { var b = e.target.closest("button"); if (b) go(b.dataset.view); };
   document.addEventListener("click", function (e) {
@@ -103,6 +102,150 @@
   });
   $("#menuBtn").onclick = function () { $("#side").classList.add("open"); $("#scrim").classList.add("on"); };
   $("#scrim").onclick = function () { $("#side").classList.remove("open"); $("#scrim").classList.remove("on"); };
+  $("#refreshOrders").onclick = loadOrders;
+  $("#dashboardLogout").onclick = async function () {
+    var button = this;
+    button.disabled = true;
+    try {
+      var response = await fetch("./api/auth.php?action=logout", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ csrf_token: button.dataset.csrf }),
+      });
+      var result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Could not sign out.");
+      }
+      window.location.href = "./products.php";
+    } catch (error) {
+      toast(error.message);
+      button.disabled = false;
+    }
+  };
+
+  function loadOrders() {
+    var status = $("#ordersStatus"),
+      body = $("#ordersTable tbody"),
+      empty = $("#ordersEmpty");
+    body.replaceChildren();
+    empty.hidden = true;
+    status.classList.remove("error");
+    status.textContent = "Loading orders...";
+    fetch("./api/orders.php", {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    })
+      .then(async function (response) {
+        var result;
+        try {
+          result = await response.json();
+        } catch (error) {
+          throw new Error("The server returned an invalid response.");
+        }
+        if (response.status === 401) {
+          window.location.href = "./products.php?auth=required";
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(result.error || "Orders could not be loaded.");
+        }
+        return result;
+      })
+      .then(function (result) {
+        if (!result) return;
+        if (!Array.isArray(result.orders)) {
+          throw new Error("The server returned an invalid orders list.");
+        }
+        result.orders.forEach(function (order) {
+          var row = document.createElement("tr"),
+            orderCell = document.createElement("td"),
+            orderNumber = document.createElement("b"),
+            customerCell = document.createElement("td"),
+            customer = document.createElement("div"),
+            itemsCell = document.createElement("td"),
+            items = document.createElement("div"),
+            totalCell = document.createElement("td"),
+            statusCell = document.createElement("td"),
+            statusBadge = document.createElement("span"),
+            dateCell = document.createElement("td");
+          orderNumber.className = "mono";
+          orderNumber.textContent = order.order_no;
+          orderCell.appendChild(orderNumber);
+
+          customer.className = "order-contact";
+          var customerName = document.createElement("b");
+          customerName.textContent = order.contact_name;
+          customer.appendChild(customerName);
+          [order.contact_email, order.contact_phone, order.shipping_address]
+            .filter(Boolean)
+            .forEach(function (value, index) {
+              var detail = document.createElement("span");
+              if (index === 2) detail.className = "order-address";
+              detail.textContent = value;
+              customer.appendChild(detail);
+            });
+          if (order.notes) {
+            var note = document.createElement("span");
+            note.textContent = "Note: " + order.notes;
+            customer.appendChild(note);
+          }
+          customerCell.appendChild(customer);
+
+          items.className = "order-items";
+          (Array.isArray(order.items) ? order.items : []).forEach(function (item) {
+            var detail = document.createElement("span");
+            detail.textContent =
+              item.product_name +
+              " - " +
+              item.size +
+              " x " +
+              item.quantity +
+              " (" +
+              order.currency +
+              " " +
+              Number(item.line_total).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) +
+              ")";
+            items.appendChild(detail);
+          });
+          itemsCell.appendChild(items);
+
+          totalCell.className = "order-total";
+          totalCell.textContent =
+            order.currency +
+            " " +
+            Number(order.total).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+          statusBadge.className =
+            "badge b-order-" + String(order.status).replace(/[^a-z_]/g, "");
+          statusBadge.textContent = String(order.status).replace(/_/g, " ");
+          statusCell.appendChild(statusBadge);
+          dateCell.className = "mono";
+          dateCell.textContent = fmtNice(order.created_at);
+          [orderCell, customerCell, itemsCell, totalCell, statusCell, dateCell]
+            .forEach(function (cell) {
+              row.appendChild(cell);
+            });
+          body.appendChild(row);
+        });
+        empty.hidden = result.orders.length > 0;
+        status.textContent = result.orders.length
+          ? "Showing " + result.orders.length + " most recent order(s)."
+          : "";
+      })
+      .catch(function (error) {
+        status.classList.add("error");
+        status.textContent = error.message;
+      });
+  }
 
   /* ---------- overview ---------- */
   function renderOverview() {

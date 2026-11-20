@@ -151,7 +151,8 @@ button {
   display: grid;
   gap: 4px;
 }
-.side-foot a {
+.side-foot a,
+.side-logout {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -161,6 +162,16 @@ button {
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
+}
+.side-logout {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.side-logout:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 .side-foot a:first-child {
   color: var(--yellow);
@@ -648,9 +659,28 @@ tr.hidden-row td:last-child {
   background: #e7e7ea;
   color: #55596a;
 }
+.b-order-pending {
+  background: #fff1c2;
+  color: #6b4c00;
+}
+.b-order-confirmed,
+.b-order-in_production,
+.b-order-shipped {
+  background: #dbe6f7;
+  color: #24467a;
+}
+.b-order-delivered {
+  background: #e2efe7;
+  color: #2f6d4b;
+}
+.b-order-cancelled {
+  background: #fde0e0;
+  color: #9b1c1f;
+}
 :root[data-theme="dark"] .b-customer,
 :root[data-theme="dark"] .b-active,
-:root[data-theme="dark"] .b-success {
+:root[data-theme="dark"] .b-success,
+:root[data-theme="dark"] .b-order-delivered {
   background: #1f4a37;
   color: #bdeacf;
 }
@@ -659,7 +689,8 @@ tr.hidden-row td:last-child {
   color: #cfe0ff;
 }
 :root[data-theme="dark"] .b-inactive,
-:root[data-theme="dark"] .b-failed {
+:root[data-theme="dark"] .b-failed,
+:root[data-theme="dark"] .b-order-cancelled {
   background: #5a2226;
   color: #ffd0d2;
 }
@@ -721,6 +752,36 @@ tr.hidden-row td:last-child {
 }
 .mono {
   font-variant-numeric: tabular-nums;
+}
+.orders-status {
+  min-height: 20px;
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+.orders-table {
+  min-width: 1020px;
+}
+.order-contact,
+.order-items {
+  display: grid;
+  gap: 5px;
+  min-width: 180px;
+}
+.order-contact span,
+.order-items span {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.order-contact .order-address {
+  max-width: 260px;
+  white-space: pre-line;
+}
+.order-total {
+  white-space: nowrap;
+  font-weight: 700;
+}
+.orders-status.error {
+  color: var(--red);
 }
 
 /* MODAL */

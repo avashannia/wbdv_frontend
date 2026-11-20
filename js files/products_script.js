@@ -1,838 +1,1125 @@
 (function () {
   "use strict";
-  var $ = function (s, c) {
-      return (c || document).querySelector(s);
+
+  var $ = function (selector, context) {
+      return (context || document).querySelector(selector);
     },
-    $$ = function (s, c) {
-      return Array.from((c || document).querySelectorAll(s));
+    $$ = function (selector, context) {
+      return Array.prototype.slice.call(
+        (context || document).querySelectorAll(selector),
+      );
     },
     root = document.documentElement,
-    store = {
-      get: function (k) {
-        try {
-          return localStorage.getItem(k);
-        } catch (e) {
-          return null;
-        }
-      },
-      set: function (k, v) {
-        try {
-          localStorage.setItem(k, v);
-        } catch (e) {}
-      },
+    currencies = {
+      PHP: { rate: 1, symbol: "₱" },
+      USD: { rate: 0.0172, symbol: "$" },
+      EUR: { rate: 0.0159, symbol: "€" },
     };
 
-  /* ---- Catalog data: [category, name, PHP price, icon, badge]. 6 are previewed, all are searchable ---- */
-  var CAT = {
-    U: "Coveralls & Uniforms",
-    K: "Chef & Kitchen",
-    J: "Jackets & Rainwear",
-    F: "Safety Footwear",
-    H: "Head, Eye & Ear PPE",
-    B: "Gloves & Body PPE",
-    S: "Seafarer Essentials",
-  };
-  var P = [
-    ["U", "Coveralls (Royal Blue)", 1000, "user-shield", "Bestseller"],
-    ["U", "Coveralls (Orange)", 1000, "user-shield"],
-    ["U", "Coveralls (Khaki)", 1000, "user-shield"],
-    ["U", "Coveralls (Navy)", 1000, "user-shield"],
-    ["U", "Coveralls (Grey)", 1000, "user-shield"],
-    ["U", "Coveralls (White)", 1050, "user-shield"],
-    ["K", "Chef Polo Long Sleeve", 800, "utensils", "New"],
-    ["K", "Chef Polo Short Sleeve", 750, "utensils"],
-    ["K", "Chef Pants (Checkered)", 700, "utensils"],
-    ["K", "Kitchen Pants (Black)", 700, "utensils"],
-    ["K", "Bib Apron", 350, "utensils"],
-    ["K", "Chef Cap", 180, "utensils"],
-    ["J", "Winter Jacket", 1500, "wind"],
-    ["J", "Ordinary Jacket", 1500, "wind"],
-    ["J", "Rain Jacket", 950, "cloud-showers-heavy"],
-    ["J", "Reflective Jacket", 1300, "wind"],
-    ["J", "Fleece Jacket", 1100, "wind"],
-    ["J", "Thermal Parka", 2200, "snowflake"],
-    ["F", "MG Safety BS-07 High Cut", 2100, "shoe-prints", "Bestseller"],
-    ["F", "MG Safety BS-08 Low Cut", 1900, "shoe-prints"],
-    ["F", "Rockwinner Safety Shoe", 2300, "shoe-prints"],
-    ["F", "PVC Rubber Boots", 850, "shoe-prints"],
-    ["F", "Steel-toe Rigger Boots", 2600, "shoe-prints"],
-    ["F", "Anti-slip Galley Shoes", 1450, "shoe-prints"],
-    ["F", "Safety Sandals", 1200, "shoe-prints"],
-    ["F", "Insulated Deck Boots", 2800, "shoe-prints"],
-    ["H", "Safety Helmet", 380, "helmet-safety", "New"],
-    ["H", "Hard Hat with Chin Strap", 450, "helmet-safety"],
-    ["H", "Welding Goggles", 260, "glasses"],
-    ["H", "Clear Safety Glasses", 150, "glasses"],
-    ["H", "Ear Muffs", 420, "headphones"],
-    ["H", "Ear Plugs (Box of 50)", 280, "headphones"],
-    ["H", "Face Shield", 320, "mask-face"],
-    ["H", "Dust Mask (Pack of 20)", 240, "mask-face"],
-    ["B", "Cotton Gloves (Dozen)", 300, "hand"],
-    ["B", "Leather Work Gloves", 280, "hand"],
-    ["B", "Rubber Gloves", 180, "hand"],
-    ["B", "Cut-resistant Gloves", 390, "hand"],
-    ["B", "Safety Harness", 1850, "link"],
-    ["B", "Reflective Vest", 220, "vest"],
-    ["B", "Life Jacket", 1600, "life-ring", "Bestseller"],
-    ["B", "Rain Suit Set", 1100, "cloud-showers-heavy"],
-    ["S", "Sailor Cap", 250, "anchor"],
-    ["S", "Epaulettes (Pair)", 200, "anchor"],
-    ["S", "Embroidered Name Tag", 90, "id-badge"],
-    ["S", "Embroidered Patch", 120, "anchor"],
-    ["S", "Cotton Socks (3 pairs)", 210, "socks"],
-    ["S", "Thermal Underwear Set", 650, "temperature-low"],
-    ["S", "Bath Towel", 320, "bath"],
-    ["S", "Duffel Bag", 900, "bag-shopping"],
-  ];
-  var SLIDES = [
-    0, 6, 12, 18, 26, 42, 2, 9, 15, 22, 30, 44,
-  ]; /* items shown in the marquee */
-
-  /* ---- Theme (saved, respects system preference) ---- */
-  function setTheme(t) {
-    root.setAttribute("data-theme", t);
-    $("#tg").innerHTML =
-      '<i class="fa-solid fa-' + (t === "dark" ? "sun" : "moon") + '"></i>';
-    store.set("cssp-theme", t);
-  }
-  setTheme(
-    store.get("cssp-theme") ||
-      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
-  );
-  $("#tg").onclick = function () {
-    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
-  };
-
-  /* ---- Navbar: dropdowns (click, desktop hover, keyboard), mobile menu, scroll state ---- */
-  var nav = $("#nav"),
-    menu = $("#menu"),
-    burger = $("#burger"),
-    hoverMQ = matchMedia("(hover:hover) and (min-width:992px)"),
-    hT;
-  function closeDD() {
-    $$(".dd.open").forEach(function (d) {
-      d.classList.remove("open");
-      $("button", d).setAttribute("aria-expanded", "false");
-    });
-  }
-  function openDD(d, byHover) {
-    closeDD();
-    d.classList.add("open");
-    d.dataset.h = byHover ? "1" : "";
-    $("button", d).setAttribute("aria-expanded", "true");
-  }
-  function setMenu(o) {
-    menu.classList.toggle("open", o);
-    burger.setAttribute("aria-expanded", o);
-  }
-  $$(".dd").forEach(function (d) {
-    $("button", d).addEventListener("click", function (e) {
-      e.stopPropagation();
-      var was = d.classList.contains("open") && d.dataset.h !== "1";
-      was ? closeDD() : openDD(d, false);
-    });
-    if (!d.closest(".menu")) return;
-    d.addEventListener("pointerenter", function (e) {
-      if (e.pointerType === "mouse" && hoverMQ.matches) {
-        clearTimeout(hT);
-        hT = setTimeout(function () {
-          openDD(d, true);
-        }, 90);
-      }
-    });
-    d.addEventListener("pointerleave", function (e) {
-      if (e.pointerType === "mouse" && hoverMQ.matches) {
-        clearTimeout(hT);
-        hT = setTimeout(closeDD, 220);
-      }
-    });
-  });
-  burger.onclick = function (e) {
-    e.stopPropagation();
-    setMenu(!menu.classList.contains("open"));
-  };
-  $$(".panel a").forEach(function (a) {
-    a.addEventListener("click", function () {
-      closeDD();
-      setMenu(false);
-    });
-  });
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest(".dd")) closeDD();
-    if (!e.target.closest("#menu,#burger")) setMenu(false);
-  });
-
-  /* ---- Scroll: navbar shrink, back-to-top, progress bar, scroll-fill statement ---- */
-  var fillParts = [];
-  Array.prototype.slice.call($("#fillText").childNodes).forEach(function (nd) {
-    if (nd.nodeType === 3)
-      nd.textContent
-        .split(/\s+/)
-        .filter(Boolean)
-        .forEach(function (w) {
-          fillParts.push('<span class="w">' + w + "</span>");
-        });
-    else if (nd.nodeType === 1) {
-      nd.classList.add("w"); /* image chips fade in with the words */
-      fillParts.push(nd.outerHTML);
-    }
-  });
-  $("#fillText").innerHTML = fillParts.join(" ");
-  var spans = $$("#fillText .w"),
-    fillEl = $("#fillText"),
-    fillIn = $(".fill-in"),
-    sec = $(".fill");
-  function onScroll() {
-    var h = root.scrollHeight - innerHeight;
-    nav.classList.toggle("scrolled", scrollY > 10);
-    $("#toTop").classList.toggle("show", scrollY > 500);
-    $("#prog").style.width = (scrollY / h) * 100 + "%";
-    /* statement: starts once the whole paragraph is on screen, first word first, and is fully lit with a short hold before it unpins */
-    var r = sec.getBoundingClientRect(),
-      pin =
-        r.height -
-        parseFloat(getComputedStyle(sec).paddingBottom) -
-        fillIn.offsetHeight,
-      st = innerHeight * 0.7,
-      en = innerHeight * 0.26 - pin * 0.8,
-      k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
-    spans.forEach(function (s, i) {
-      s.classList.toggle("on", i < Math.ceil(k * spans.length));
-    });
-    fillIn.classList.toggle("done", k >= 0.98);
-    closeDD();
-  }
-  addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-  $("#toTop").onclick = function () {
+  function readStorage(key, fallback) {
     try {
-      scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err) {
-      scrollTo(0, 0);
+      var value = localStorage.getItem(key);
+      return value === null ? fallback : value;
+    } catch (error) {
+      return fallback;
     }
-  };
+  }
 
-  /* ---- Currency (base PHP) ---- */
-  var rates = { PHP: 1, USD: 0.0172, EUR: 0.0159 },
-    sym = { PHP: "₱", USD: "$", EUR: "€" },
-    cur = store.get("cssp-cur") || "PHP";
-  function fmt(p) {
+  function writeStorage(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      showToast("Your browser could not save this preference.");
+    }
+  }
+
+  function showToast(message) {
+    var toast = document.createElement("div");
+    toast.className = "toast";
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+    $("#toastContainer").appendChild(toast);
+    window.setTimeout(function () {
+      toast.remove();
+    }, 2400);
+  }
+
+  var currency = readStorage("cssp-cur", "PHP");
+  if (!currencies[currency]) currency = "PHP";
+
+  function formatPrice(amount) {
+    var converted = amount * currencies[currency].rate;
     return (
-      sym[cur] +
-      (p * rates[cur]).toLocaleString("en-US", {
+      currencies[currency].symbol +
+      converted.toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })
     );
   }
-  function renderPrices() {
-    $$("[data-price]").forEach(function (el) {
-      $(".price", el).textContent = fmt(+el.dataset.price);
-    });
-    $("#curCode").textContent = cur;
-    renderCart();
+
+  function setTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    $("#tg").innerHTML =
+      '<i class="fa-solid fa-' + (theme === "dark" ? "sun" : "moon") + '"></i>';
+    $("#tg").setAttribute(
+      "aria-label",
+      theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+    );
+    writeStorage("cssp-theme", theme);
   }
-  $$("[data-cur]").forEach(function (b) {
-    b.onclick = function () {
-      cur = b.dataset.cur;
-      store.set("cssp-cur", cur);
-      closeDD();
-      renderPrices();
-    };
+
+  var savedTheme = readStorage("cssp-theme", "");
+  if (savedTheme !== "light" && savedTheme !== "dark") {
+    savedTheme =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+  }
+  setTheme(savedTheme);
+  $("#tg").addEventListener("click", function () {
+    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
   });
 
-  /* ---- Cart ---- */
-  var cart = [];
+  var nav = $("#nav"),
+    menu = $("#menu"),
+    burger = $("#burger");
+
+  function closeDropdowns() {
+    $$(".dd.open").forEach(function (dropdown) {
+      dropdown.classList.remove("open");
+      var button = $("button", dropdown);
+      if (button) button.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function setMenu(open) {
+    menu.classList.toggle("open", open);
+    burger.setAttribute("aria-expanded", String(open));
+  }
+
+  $$(".dd").forEach(function (dropdown) {
+    var button = dropdown.querySelector(":scope > button");
+    if (!button) return;
+    button.addEventListener("click", function (event) {
+      event.stopPropagation();
+      var opening = !dropdown.classList.contains("open");
+      closeDropdowns();
+      dropdown.classList.toggle("open", opening);
+      button.setAttribute("aria-expanded", String(opening));
+    });
+  });
+
+  burger.addEventListener("click", function (event) {
+    event.stopPropagation();
+    setMenu(!menu.classList.contains("open"));
+  });
+
+  $$(".panel a").forEach(function (link) {
+    link.addEventListener("click", function () {
+      closeDropdowns();
+      setMenu(false);
+    });
+  });
+
+  var cart = [],
+    uniformSizeReference = [
+      { size: "S", label: "Small", chest: "86–90", waist: "72–76", height: "160–165" },
+      { size: "M", label: "Medium", chest: "91–96", waist: "77–82", height: "166–170" },
+      { size: "L", label: "Large", chest: "97–102", waist: "83–88", height: "171–176" },
+      { size: "XL", label: "X-Large", chest: "103–110", waist: "89–96", height: "177–182" },
+      { size: "2XL", label: "XX-Large", chest: "111–118", waist: "97–104", height: "183–188" },
+    ],
+    shoeSizeReference = [
+      { size: "7", eu: "41", length: "26.0 cm" },
+      { size: "8", eu: "42", length: "26.7 cm" },
+      { size: "9", eu: "43", length: "27.3 cm" },
+      { size: "10", eu: "44", length: "28.0 cm" },
+      { size: "11", eu: "45", length: "28.7 cm" },
+    ];
+
+  function migrateLegacyCart(legacyCart) {
+    if (!Array.isArray(legacyCart)) return [];
+    return legacyCart.reduce(function (migrated, item) {
+      if (!item || typeof item.name !== "string" || typeof item.size !== "string") {
+        return migrated;
+      }
+      var card = $$(".product-card").find(function (productCard) {
+          return productCard.dataset.name === item.name;
+        }),
+        quantity = Number(item.quantity),
+        size = item.size.trim().toUpperCase();
+      if (!card || !Number.isInteger(quantity) || quantity < 1 || quantity > 999) {
+        return migrated;
+      }
+
+      var sizeReference,
+        sizeLabel;
+      if (card.dataset.type === "Shoes") {
+        size = size.replace(/^PH\s*/, "");
+        var euSize = size.match(/^EU\s*(\d+)$/);
+        if (euSize) size = String(Number(euSize[1]) - 34);
+        sizeReference = shoeSizeReference.find(function (reference) {
+          return reference.size === size;
+        });
+        if (!sizeReference) return migrated;
+        sizeLabel =
+          "PH " +
+          sizeReference.size +
+          " (EU " +
+          sizeReference.eu +
+          " · " +
+          sizeReference.length +
+          ")";
+      } else {
+        var uniformSizeLabels = {
+          SMALL: "S",
+          MEDIUM: "M",
+          LARGE: "L",
+          "X-LARGE": "XL",
+          "XX-LARGE": "2XL",
+        };
+        size = uniformSizeLabels[size] || size;
+        sizeReference = uniformSizeReference.find(function (reference) {
+          return reference.size === size;
+        });
+        if (!sizeReference) return migrated;
+        sizeLabel = sizeReference.label;
+      }
+
+      migrated.push({
+        sku: card.dataset.sku,
+        name: card.dataset.name,
+        price: Number(card.dataset.price),
+        quantity: quantity,
+        size: sizeReference.size,
+        sizeLabel: sizeLabel,
+      });
+      return migrated;
+    }, []);
+  }
+
+  try {
+    var currentCart = window.CSSPSiteState.getCart();
+    if (currentCart === null) {
+      var legacyCart = JSON.parse(readStorage("cssp-products-cart", "[]"));
+      cart = migrateLegacyCart(legacyCart);
+      if (!window.CSSPSiteState.setCart(cart)) {
+        showToast("Your cart could not be saved in this browser.");
+      }
+      if (Array.isArray(legacyCart) && cart.length < legacyCart.length) {
+        showToast("Some saved cart selections need to be added again with a supported size.");
+      }
+    } else {
+      var validSavedCart = currentCart.filter(function (item) {
+        var hasValidFields =
+          item &&
+          typeof item.sku === "string" &&
+          typeof item.name === "string" &&
+          Number.isFinite(Number(item.price)) &&
+          Number(item.price) >= 0 &&
+          Number.isInteger(Number(item.quantity)) &&
+          Number(item.quantity) > 0 &&
+          typeof item.size === "string" &&
+          typeof item.sizeLabel === "string";
+        if (!hasValidFields) return false;
+        if (!item.sku) return !item.size;
+        return (
+          (item.sku.indexOf("SHO-") === 0
+            ? shoeSizeReference.some(function (reference) {
+                return reference.size === item.size;
+              })
+            : uniformSizeReference.some(function (reference) {
+                return reference.size === item.size;
+              }))
+        );
+      });
+      cart = validSavedCart.map(function (item) {
+        return {
+          sku: item.sku,
+          name: item.name,
+          price: Number(item.price),
+          quantity: Number(item.quantity),
+          size: item.size,
+          sizeLabel: item.sku
+            ? item.sku.indexOf("SHO-") === 0
+              ? item.sizeLabel
+              : uniformSizeReference.find(function (reference) {
+                  return reference.size === item.size;
+                }).label
+            : "",
+        };
+      });
+      if (!window.CSSPSiteState.setCart(cart)) {
+        showToast("Your cart could not be saved in this browser.");
+      }
+      if (cart.length < currentCart.length) {
+        showToast("Some saved cart selections need to be added again with a supported size.");
+      }
+    }
+  } catch (error) {
+    cart = [];
+  }
+
+  function saveCart() {
+    if (!window.CSSPSiteState.setCart(cart)) {
+      showToast("Your cart could not be saved in this browser.");
+    }
+  }
+
+  function makeButton(label, action, icon, className) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.setAttribute("aria-label", label);
+    button.dataset.cartAction = action;
+    if (className) button.className = className;
+    var glyph = document.createElement("i");
+    glyph.className = "fa-solid fa-" + icon;
+    button.appendChild(glyph);
+    return button;
+  }
+
   function renderCart() {
-    var n = 0,
-      t = 0;
-    $("#cartList").innerHTML = cart.length
-      ? cart
-          .map(function (i, x) {
-            n += i.q;
-            t += i.p * i.q;
-            return (
-              '<div class="ci"><b>' +
-              i.n +
-              " × " +
-              i.q +
-              "</b><span>" +
-              fmt(i.p * i.q) +
-              '</span><button data-rm="' +
-              x +
-              '" aria-label="Remove"><i class="fa-solid fa-trash"></i></button></div>'
-            );
-          })
-          .join("")
-      : "<p>Your cart is empty.</p>";
-    $("#cartCount").textContent = n;
-    $("#cartTot").textContent = fmt(t);
-  }
-  function add(i) {
-    var f = cart.find(function (c) {
-      return c.n === P[i][1];
-    });
-    f ? f.q++ : cart.push({ n: P[i][1], p: P[i][2], q: 1 });
-    renderCart();
-    toast(P[i][1] + " added to cart");
-    var c = $("#cartCount");
-    c.classList.remove("bump");
-    void c.offsetWidth;
-    c.classList.add("bump");
-  }
-  function toast(m) {
-    var t = document.createElement("div");
-    t.className = "toast";
-    t.textContent = m;
-    document.body.appendChild(t);
-    setTimeout(function () {
-      t.remove();
-    }, 1800);
-  }
-  $("#cartList").onclick = function (e) {
-    var b = e.target.closest("[data-rm]");
-    if (b) {
-      cart.splice(+b.dataset.rm, 1);
-      renderCart();
-    }
-  };
+    var list = $("#cartList"),
+      itemCount = 0,
+      total = 0;
+    list.replaceChildren();
 
-  /* ---- Product marquee. For real photos, add a path as the 6th value of an item, e.g. "assets/p1.jpg" ---- */
-  var tiles = SLIDES.map(function (i) {
-    var p = P[i];
-    return (
-      '<div class="mt" data-price="' +
-      p[2] +
-      '">' +
-      (p[5]
-        ? '<img src="' + p[5] + '" alt="' + p[1] + '" loading="lazy">'
-        : '<i class="fa-solid fa-' + p[3] + '"></i>') +
-      '<div class="cap"><b>' +
-      p[1] +
-      '</b><span class="price"></span><button class="pill" data-add="' +
-      i +
-      '">Add to cart</button></div></div>'
-    );
-  }).join("");
-  $("#mrq").innerHTML = '<div class="trk">' + tiles + tiles + "</div>";
-  $("#mrq").onclick = function (e) {
-    var b = e.target.closest("[data-add]");
-    if (b) add(+b.dataset.add);
-  };
+    if (!cart.length) {
+      var empty = document.createElement("div");
+      empty.className = "cart-empty";
+      empty.innerHTML =
+        '<i class="fa-solid fa-basket-shopping" aria-hidden="true"></i><b>Your cart is waiting.</b><span>Add an item to see it here.</span>';
+      list.appendChild(empty);
+    } else {
+      cart.forEach(function (item, index) {
+        itemCount += item.quantity;
+        total += item.price * item.quantity;
 
-  /* ---- Overlays: drawer, modals, search, Esc ---- */
-  function closeAll() {
-    $$(".ov.open,.drawer.open").forEach(function (o) {
-      o.classList.remove("open");
-    });
-  }
-  function openOv(el) {
-    closeAll();
-    el.classList.add("open");
-    var f = $("input", el);
-    if (f)
-      setTimeout(function () {
-        f.focus();
-      }, 120);
-  }
-  $("#cartBtn").onclick = function () {
-    openOv($("#drawer"));
-  };
-  $("#searchBtn").onclick = function () {
-    openOv($("#search"));
-  };
-  document.addEventListener("click", function (e) {
-    var o = e.target.closest("[data-open]");
-    if (o) {
-      e.preventDefault();
-      setMenu(false);
-      openOv($("#" + o.dataset.open));
-    }
-    if (e.target.closest("[data-close]") || e.target.classList.contains("ov"))
-      closeAll();
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      closeAll();
-      closeDD();
-      setMenu(false);
-      fmSet(false);
-    }
-  });
-
-  /* ---- Live search over all 54 items ---- */
-  $("#q").oninput = function () {
-    var v = this.value.toLowerCase().trim();
-    $("#sr").innerHTML = v
-      ? P.map(function (p, i) {
-          return p[1].toLowerCase().includes(v) ||
-            CAT[p[0]].toLowerCase().includes(v)
-            ? "<div><b>" +
-                p[1] +
-                "</b><span>" +
-                fmt(p[2]) +
-                '</span><button class="pill" data-add="' +
-                i +
-                '">Add</button></div>'
-            : "";
-        }).join("") || "<p>No matches.</p>"
-      : "";
-  };
-  $("#sr").onclick = function (e) {
-    var b = e.target.closest("[data-add]");
-    if (b) add(+b.dataset.add);
-  };
-
-  /* ---- Forms with validation ---- */
-  function validate(f) {
-    var ok = true;
-    $$("input[required]", f).forEach(function (i) {
-      var bad =
-        !i.value.trim() ||
-        (i.type === "email" && !/^\S+@\S+\.\S+$/.test(i.value)) ||
-        (i.minLength > 0 && i.value.length < i.minLength);
-      i.nextElementSibling.textContent = bad
-        ? "Please enter a valid " +
-          (i.name === "pw" ? "password (6+ chars)" : i.name)
-        : "";
-      if (bad) ok = false;
-    });
-    return ok;
-  }
-  $$("form.box").forEach(function (f) {
-    f.onsubmit = function (e) {
-      e.preventDefault();
-      if (validate(f)) {
-        toast(f.closest("#quote") ? "Quote request sent!" : "Welcome to CSSP!");
-        f.reset();
-        closeAll();
-      }
-    };
-  });
-  $$("[data-tab]").forEach(function (t) {
-    t.onclick = function () {
-      $$("[data-tab]").forEach(function (x) {
-        x.classList.toggle("on", x === t);
+        var row = document.createElement("div"),
+          name = document.createElement("b"),
+          detail = document.createElement("span"),
+          price = document.createElement("span"),
+          controls = document.createElement("div");
+        row.className = "ci";
+        name.textContent = item.name;
+        detail.className = "cart-item-detail";
+        detail.textContent =
+          (item.sku
+            ? "Size: " + item.sizeLabel
+            : "Quote item · Not available for online checkout") +
+          " · " +
+          "Unit price " +
+          formatPrice(item.price);
+        price.className = "cart-item-price";
+        price.textContent = formatPrice(item.price * item.quantity);
+        controls.className = "cart-item-controls";
+        controls.appendChild(
+          makeButton("Decrease quantity", "decrease", "minus"),
+        );
+        var quantity = document.createElement("span");
+        quantity.textContent = String(item.quantity);
+        quantity.setAttribute("aria-label", "Quantity");
+        controls.appendChild(quantity);
+        controls.appendChild(
+          makeButton("Increase quantity", "increase", "plus"),
+        );
+        var removeButton = makeButton(
+          "Remove " + item.name,
+          "remove",
+          "trash",
+          "cart-remove",
+        );
+        controls.appendChild(removeButton);
+        row.dataset.index = String(index);
+        row.appendChild(name);
+        row.appendChild(detail);
+        row.appendChild(price);
+        row.appendChild(controls);
+        list.appendChild(row);
       });
-      $("#nameRow").hidden = t.dataset.tab === "in";
-      $("#acctGo").textContent =
-        t.dataset.tab === "in" ? "Log in" : "Create account";
-    };
-  });
+    }
 
-  /* ---- Floating contact buttons with chat bubble beside the tapped button ---- */
-  var fm = $("#fm"),
-    fi = $("#finfo"),
-    pinned = null,
-    INFO = {
-      call: [
-        "Call us",
-        "Mon to Sat, 8 AM to 6 PM",
-        "+63 900 000 0000",
-        "tel:+639000000000",
-      ],
-      msg: [
-        "Email us",
-        "We reply within one business day.",
-        "hello@example.com",
-        "mailto:hello@example.com",
-      ],
-      share: [
-        "Share this page",
-        "Copy or share the link with your team.",
-        "Share now",
-        "#",
-      ],
-    };
-  var fabs = $(".fabs"),
-    hideT;
-  function fmSet(o) {
-    fm.classList.toggle("open", o);
-    fabs.classList.toggle("menu-open", o);
-    $("#fmMain").setAttribute("aria-expanded", o);
-    if (!o) {
-      fi.classList.remove("show");
-      pinned = null;
-    }
-  }
-  function bubble(b) {
-    var t = INFO[b.dataset.info],
-      a = $("a", fi),
-      r = b.getBoundingClientRect();
-    $("b", fi).textContent = t[0];
-    $("span", fi).textContent = t[1];
-    a.textContent = t[2];
-    a.href = t[3];
-    a.dataset.act = b.dataset.info;
-    fi.style.top = r.top + r.height / 2 + "px";
-    fi.style.right = innerWidth - r.left + 16 + "px";
-    fi.classList.add("show");
-  }
-  $("#fmMain").onclick = function (e) {
-    e.stopPropagation();
-    fmSet(!fm.classList.contains("open"));
-  };
-  $$(".fm-list .fb").forEach(function (b) {
-    b.onpointerenter = function (e) {
-      if (e.pointerType === "mouse" && !pinned) bubble(b);
-    };
-    b.onpointerleave = function (e) {
-      if (e.pointerType === "mouse" && !pinned) {
-        clearTimeout(hideT);
-        hideT = setTimeout(function () {
-          fi.classList.remove("show");
-        }, 250);
-      }
-    };
-    b.onclick = function (e) {
-      e.stopPropagation();
-      if (b.dataset.info === "share") {
-        fi.classList.remove("show");
-        pinned = null;
-        doShare();
-        return;
-      }
-      pinned = b;
-      bubble(b);
-    };
-  });
-  fi.onpointerenter = function () {
-    clearTimeout(hideT);
-  };
-  fi.onpointerleave = function (e) {
-    if (e.pointerType === "mouse" && !pinned) {
-      hideT = setTimeout(function () {
-        fi.classList.remove("show");
-      }, 250);
-    }
-  };
-  /* copy works on http too (clipboard API needs https/localhost, so fall back to execCommand) */
-  function copyText(t) {
-    if (navigator.clipboard && window.isSecureContext)
-      return navigator.clipboard.writeText(t);
-    return new Promise(function (ok, no) {
-      var ta = document.createElement("textarea");
-      ta.value = t;
-      ta.setAttribute("readonly", "");
-      ta.style.cssText = "position:fixed;top:-100px;opacity:0";
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand("copy") ? ok() : no();
-      } catch (err) {
-        no(err);
-      }
-      ta.remove();
-    });
-  }
-  function copyLink(u) {
-    copyText(u).then(
-      function () {
-        toast("Link copied");
-      },
-      function () {
-        window.prompt("Copy this link:", u);
-      },
+    $("#cartCount").textContent = String(itemCount);
+    $("#cartCount").setAttribute(
+      "aria-label",
+      itemCount + (itemCount === 1 ? " item in cart" : " items in cart"),
     );
-  }
-  function doShare() {
-    var u = location.href.split("#")[0];
-    if (navigator.share) {
-      navigator.share({ title: document.title, url: u }).catch(function (err) {
-        if (!err || err.name !== "AbortError") copyLink(u);
-      });
-    } else copyLink(u);
-  }
-  $("a", fi).onclick = function (e) {
-    if (this.dataset.act !== "share") return;
-    e.preventDefault();
-    fmSet(false);
-    doShare();
-  };
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest("#fm,#finfo")) fmSet(false);
-  });
-
-  /* ---- Interactive previews: size picker, name-tag embroidery ---- */
-  var CHEST = {
-    XS: "32–34",
-    S: "34–36",
-    M: "38–40",
-    L: "42–44",
-    XL: "46–48",
-    "2XL": "50–52",
-    "3XL": "54–56",
-  };
-  $("#sizes").onclick = function (e) {
-    var b = e.target.closest("button");
-    if (!b) return;
-    $$("#sizes button").forEach(function (x) {
-      x.classList.toggle("on", x === b);
-    });
-    $("#sizeOut").textContent =
-      "Size " + b.textContent + " · chest " + CHEST[b.textContent] + " in";
-  };
-  $("#tagIn").oninput = function () {
-    $("#tagOut").textContent = this.value.toUpperCase() || "YOUR NAME";
-  };
-
-  /* ---- Reveal on scroll: animations replay every time a part re-enters the screen ---- */
-  var chatT = [];
-  function chatReset() {
-    chatT.forEach(clearTimeout);
-    chatT = [];
-    $$("#chat .msg").forEach(function (m) {
-      m.classList.remove("show");
-    });
-    $("#dots").classList.remove("on");
-  }
-  function typeChat() {
-    chatReset();
-    var m = $$("#chat .msg"),
-      d = $("#dots");
-    [0, 1, 2].forEach(function (i) {
-      chatT.push(
-        setTimeout(function () {
-          m[i].classList.add("show");
-        }, i * 1100),
+    $("#cartTot").textContent = formatPrice(total);
+    $("#curCode").textContent = currency;
+    $$("[data-cur]").forEach(function (button) {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.cur === currency),
       );
     });
-    chatT.push(
-      setTimeout(function () {
-        d.classList.add("on");
-      }, 3400),
-    );
-    chatT.push(
-      setTimeout(function () {
-        d.classList.remove("on");
-        m[3].classList.add("show");
-      }, 4800),
-    );
+    $$(".card-price[data-base]").forEach(function (price) {
+      price.textContent = formatPrice(Number(price.dataset.base));
+    });
+    if (activeProduct) {
+      $("#productDetailPrice").textContent = formatPrice(activeProduct.price);
+    }
+    if ($("#checkout").classList.contains("open")) {
+      $("#checkoutSubtotal").textContent = formatPrice(
+        cart.reduce(function (sum, item) {
+          return sum + item.price * item.quantity;
+        }, 0),
+      );
+    }
   }
-  function count(el, on) {
-    var id = (el._c = (el._c || 0) + 1);
-    if (!on) {
-      el.textContent = "0";
+
+  function isOrderableCartItem(item) {
+    if (!item.sku || !item.size) return false;
+    var references =
+      item.sku.indexOf("SHO-") === 0
+        ? shoeSizeReference
+        : uniformSizeReference;
+    return references.some(function (reference) {
+      return reference.size === item.size;
+    });
+  }
+
+  window.CSSPSiteState.onCartChange(function (updatedCart) {
+    cart = updatedCart;
+    renderCart();
+  });
+
+  var cartBackdrop = document.createElement("div");
+  cartBackdrop.className = "cart-backdrop";
+  cartBackdrop.setAttribute("aria-hidden", "true");
+  document.body.appendChild(cartBackdrop);
+
+  function closeOverlays() {
+    if ($("#account").classList.contains("open") && !sessionUser) {
+      pendingCheckout = false;
+    }
+    $$(".ov.open").forEach(function (overlay) {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    });
+    $("#drawer").classList.remove("open");
+    $("#drawer").setAttribute("aria-hidden", "true");
+    $("#cartBtn").setAttribute("aria-expanded", "false");
+    cartBackdrop.classList.remove("open");
+    closeDropdowns();
+  }
+
+  function openOverlay(overlay) {
+    closeOverlays();
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    var focusTarget =
+      overlay.id === "productOptions"
+        ? $("[data-close]", overlay)
+        : $("input", overlay);
+    if (focusTarget) window.setTimeout(function () {
+      focusTarget.focus();
+    }, 100);
+  }
+
+  function openCart() {
+    closeOverlays();
+    $("#drawer").classList.add("open");
+    $("#drawer").setAttribute("aria-hidden", "false");
+    $("#cartBtn").setAttribute("aria-expanded", "true");
+    cartBackdrop.classList.add("open");
+    var closeButton = $("#drawer [data-close]");
+    if (closeButton) closeButton.focus();
+  }
+
+  $("#drawer").setAttribute("aria-hidden", "true");
+  $("#cartBtn").setAttribute("aria-expanded", "false");
+  $("#cartBtn").addEventListener("click", openCart);
+  $("#searchBtn").addEventListener("click", function () {
+    openOverlay($("#search"));
+  });
+  cartBackdrop.addEventListener("click", closeOverlays);
+  $("#drawer").addEventListener("click", function (event) {
+    var actionButton = event.target.closest("[data-cart-action]");
+    if (!actionButton) return;
+    var row = actionButton.closest(".ci"),
+      index = Number(row.dataset.index),
+      action = actionButton.dataset.cartAction;
+    if (!cart[index]) return;
+    if (action === "increase") cart[index].quantity += 1;
+    if (action === "increase" && cart[index].quantity > 999) {
+      cart[index].quantity = 999;
+      showToast("A maximum of 999 units can be ordered per size.");
+    }
+    if (action === "decrease") {
+      cart[index].quantity -= 1;
+      if (cart[index].quantity <= 0) cart.splice(index, 1);
+    }
+    if (action === "remove") cart.splice(index, 1);
+    saveCart();
+    renderCart();
+  });
+
+  $("[data-cart-clear]").addEventListener("click", function () {
+    cart = [];
+    saveCart();
+    renderCart();
+    showToast("Cart cleared.");
+  });
+
+  function openCheckout() {
+    if (!cart.length) {
+      showToast("Add a product to your cart before checking out.");
       return;
     }
-    var end = +el.dataset.count,
-      t0 = performance.now();
-    (function s(t) {
-      if (el._c !== id) return;
-      var k = Math.min((t - t0) / 1400, 1);
-      el.textContent =
-        Math.round(end * (1 - Math.pow(1 - k, 3))) + (el.dataset.suf || "");
-      if (k < 1) requestAnimationFrame(s);
-    })(t0);
+    if (cart.some(function (item) { return !isOrderableCartItem(item); })) {
+      showToast("Remove quote-only items from your cart before online checkout.");
+      return;
+    }
+    $("#checkoutForm").reset();
+    $("#checkoutPhone").value = sessionUser.phone || "";
+    $("#checkoutSubtotal").textContent = formatPrice(
+      cart.reduce(function (sum, item) {
+        return sum + item.price * item.quantity;
+      }, 0),
+    );
+    $("#checkoutError").textContent = "";
+    openOverlay($("#checkout"));
   }
-  var io = new IntersectionObserver(
-    function (es) {
-      es.forEach(function (en) {
-        var el = en.target,
-          on = en.isIntersecting;
-        if (el.id === "chat") return on ? typeChat() : chatReset();
-        if (el.dataset.count) return count(el, on);
-        el.classList.toggle("in", on);
-      });
-    },
-    { threshold: 0.2 },
-  );
-  $$(".rv,[data-count],#chat").forEach(function (el, i) {
-    el.style.setProperty("--i", i % 4);
-    io.observe(el);
+
+  function beginCheckout() {
+    if (!cart.length) {
+      showToast("Add a product to your cart before checking out.");
+      return;
+    }
+    if (cart.some(function (item) { return !isOrderableCartItem(item); })) {
+      showToast("Remove quote-only items from your cart before online checkout.");
+      return;
+    }
+    if (!sessionUser) {
+      pendingCheckout = true;
+      setAccountMode("login");
+      $("#accountMessage").textContent =
+        "Log in or create an account to place your order.";
+      openOverlay($("#account"));
+      return;
+    }
+    openCheckout();
+  }
+
+  $$("[data-checkout]").forEach(function (button) {
+    button.addEventListener("click", beginCheckout);
   });
 
-  /* ---- Headlines: word-mask reveal ---- */
-  $$("h2").forEach(function (h) {
-    if (h.closest(".ov") || h.querySelector(".mw")) return;
-    var n = 0,
-      frag = document.createDocumentFragment();
-    h.setAttribute("aria-label", h.textContent.replace(/\s+/g, " ").trim());
-    Array.prototype.slice.call(h.childNodes).forEach(function (nd) {
-      if (nd.nodeType !== 3) return frag.appendChild(nd);
-      nd.textContent.split(/(\s+)/).forEach(function (w) {
-        if (!w) return;
-        if (/^\s+$/.test(w))
-          return frag.appendChild(document.createTextNode(" "));
-        var m = document.createElement("span"),
-          s = document.createElement("span");
-        m.className = "mw";
-        m.setAttribute("aria-hidden", "true");
-        s.textContent = w;
-        s.style.setProperty("--w", n++);
-        m.appendChild(s);
-        frag.appendChild(m);
-      });
+  $$("[data-cur]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (!currencies[button.dataset.cur]) return;
+      currency = button.dataset.cur;
+      writeStorage("cssp-cur", currency);
+      closeDropdowns();
+      renderCart();
     });
-    h.textContent = "";
-    h.appendChild(frag);
   });
 
-  /* ---- Hero: scroll-driven card transition ----
-     p = 0..1 over the pinned runway: card grows to full-bleed, copy swaps, video flies through,
-     then the next section slides over as a sheet (that part is plain scroll). */
-  (function () {
-    var runEl = $(".hero-run");
-    if (!runEl) return;
-    var card = $(".card"),
-      wrap = $(".card-wrap"),
-      bks = $$(".bk"),
-      hi = $(".hi"),
-      lines = $$(".hi .ln > span"),
-      hiRest = $$(".hi-sub,.hi-cta"),
-      expl = $(".explore"),
-      reduce = matchMedia("(prefers-reduced-motion: reduce)").matches,
-      vw,
-      vh,
-      sw,
-      st,
-      run,
-      small,
-      tgt = 0,
-      cur = 0,
-      raf = 0;
-    function clamp01(v) {
-      return Math.min(Math.max(v, 0), 1);
+  var activeProduct = null,
+    selectedSize = null,
+    galleryImages = [],
+    galleryIndex = 0,
+    sessionUser = null,
+    csrfToken = "",
+    pendingCheckout = false,
+    accountMode = "login";
+
+  function setAccountMode(mode) {
+    accountMode = mode;
+    $$("[data-tab]", $("#account")).forEach(function (tab) {
+      tab.classList.toggle(
+        "on",
+        tab.dataset.tab === (mode === "register" ? "up" : "in"),
+      );
+    });
+    $("#nameRow").hidden = mode !== "register";
+    $("#nameRow input").required = mode === "register";
+    var passwordInput = $('input[name="password"]', $("#account"));
+    passwordInput.setAttribute(
+      "autocomplete",
+      mode === "register" ? "new-password" : "current-password",
+    );
+    if (mode === "register") passwordInput.minLength = 8;
+    else passwordInput.removeAttribute("minlength");
+    $("#acctGo").textContent =
+      mode === "register" ? "Create account" : "Log in";
+  }
+
+  function updateAccountUI() {
+    var signedIn = Boolean(sessionUser);
+    $("#accountFields").hidden = signedIn;
+    $("#accountSession").hidden = !signedIn;
+    $("#accountMessage").textContent = "";
+    $("#adminDashboard").hidden =
+      !signedIn ||
+      (sessionUser.role !== "owner" && sessionUser.role !== "admin");
+    if (signedIn) {
+      $("#accountUserName").textContent = sessionUser.full_name;
+      $("#accountUserEmail").textContent = sessionUser.email;
+      $("#checkoutAccount").textContent =
+        "Ordering as " + sessionUser.full_name + " (" + sessionUser.email + ")";
+      $("#acct").setAttribute("aria-label", "Account: " + sessionUser.full_name);
+    } else {
+      $("#acct").setAttribute("aria-label", "Account");
+      $("#checkoutAccount").textContent = "";
     }
-    function seg(p, a, b) {
-      return clamp01((p - a) / (b - a));
+  }
+
+  async function requestJson(url, options) {
+    var response = await fetch(url, Object.assign({
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    }, options || {}));
+    var payload;
+    try {
+      payload = await response.json();
+    } catch (error) {
+      throw new Error("The server returned an invalid response. Please try again.");
     }
-    function ease(t) {
-      return t < 0.5
-        ? 4 * t * t * t
-        : 1 - Math.pow(-2 * t + 2, 3) / 2; /* cubic-bezier(.65,0,.35,1) */
+    if (!response.ok) {
+      var requestError = new Error(
+        payload && payload.error ? payload.error : "The request could not be completed.",
+      );
+      requestError.status = response.status;
+      throw requestError;
     }
-    function render(p) {
-      var t = ease(seg(p, 0, 0.32)),
-        u = ease(seg(p, 0.3, 0.5)),
-        ex = ease(seg(p, 0, 0.2)),
-        z = seg(p, 0.3, 1),
-        c = ease(seg(p, 0.58, 1)),
-        side = ((vw - sw) / 2) * (1 - t),
-        tilt = small ? 0 : 1;
-      card.style.clipPath =
-        "inset(" +
-        (st * (1 - t)).toFixed(1) +
-        "px " +
-        side.toFixed(1) +
-        "px " +
-        (vh * 0.2 * t).toFixed(1) +
-        "px " +
-        side.toFixed(1) +
-        "px round " +
-        (32 * (1 - t) + 24 * c).toFixed(1) +
-        "px)";
-      wrap.style.transform =
-        "rotate(" +
-        (2.5 * tilt * (1 - t)).toFixed(2) +
-        "deg) scale(" +
-        (1 - 0.06 * c).toFixed(4) +
-        ")";
-      card.style.setProperty("--k", (1 + 0.15 * z + 0.12 * (1 - t)).toFixed(4));
-      card.style.setProperty("--dim", (0.35 * c).toFixed(3));
-      bks.forEach(function (b, i) {
-        b.style.transform =
-          "translate(" +
-          (-sw * (i ? 0.012 : 0.026) * (1 - t)).toFixed(1) +
-          "px," +
-          (t * vh * 0.55).toFixed(1) +
-          "px) rotate(" +
-          ((i ? -2.5 : -5) * tilt * (1 - t)).toFixed(2) +
-          "deg)";
-        b.style.opacity = (1 - seg(p, 0.04, 0.2)).toFixed(3);
-      });
-      lines.forEach(function (s) {
-        s.style.transform = "translateY(" + (-115 * ex).toFixed(1) + "%)";
-      });
-      hiRest.forEach(function (e) {
-        e.style.transform = "translateY(" + (-40 * ex).toFixed(1) + "px)";
-        e.style.opacity = (1 - ex).toFixed(3);
-      });
-      hi.style.visibility = ex >= 1 ? "hidden" : "visible";
-      expl.style.opacity = (
-        seg(p, 0.3, 0.42) *
-        (1 - seg(p, 0.52, 0.64))
-      ).toFixed(3);
-    }
-    function tick() {
-      cur += (tgt - cur) * 0.16;
-      if (Math.abs(tgt - cur) < 0.0005) cur = tgt;
-      render(cur);
-      raf = cur === tgt ? 0 : requestAnimationFrame(tick);
-    }
-    function kick() {
-      tgt = clamp01(scrollY / run);
-      if (!raf) raf = requestAnimationFrame(tick);
-    }
-    function geo() {
-      vw = innerWidth;
-      vh = innerHeight;
-      small = vw < 992;
-      sw = Math.min(vw * 0.88, 1240);
-      st = vh * 0.58;
-      run = Math.max(runEl.offsetHeight - vh, 1);
-      bks.forEach(function (b) {
-        b.style.left = (vw - sw) / 2 + "px";
-        b.style.top = st + "px";
-        b.style.width = sw + "px";
-        b.style.height = vh + "px";
-      });
-      if (reduce) {
-        render(0.5);
-      } else {
-        kick();
-        cur = tgt;
-        render(cur);
+    return payload;
+  }
+
+  async function refreshSession() {
+    try {
+      var data = await requestJson("./api/auth.php?action=session");
+      sessionUser = data.authenticated ? data.user : null;
+      csrfToken = data.csrf_token || "";
+      updateAccountUI();
+      if (new URLSearchParams(window.location.search).get("auth") === "required" && !sessionUser) {
+        $("#accountMessage").textContent = "Please log in with an administrator account to open the dashboard.";
+        setAccountMode("login");
+        openOverlay($("#account"));
       }
+    } catch (error) {
+      $("#accountMessage").textContent = error.message;
     }
-    geo();
-    addEventListener("resize", geo);
-    if (!reduce) addEventListener("scroll", kick, { passive: true });
-  })();
+  }
 
-  /* ---- What we do: click a service, the number rolls and the picture wipes in ---- */
-  var svcGrid = $("#svcGrid");
-  if (svcGrid) {
-    var svcItems = $$(".svc-item", svcGrid),
-      svcImgs = $$(".svc-img", svcGrid),
-      svcCur = 0,
-      svcT;
-    var svcPick = function (i) {
-      if (i === svcCur) return;
-      svcImgs[svcCur].classList.remove("on");
-      svcImgs[svcCur].classList.add("prev");
-      svcImgs[i].classList.remove("prev");
-      svcImgs[i].classList.add("on");
-      svcCur = i;
-      clearTimeout(svcT);
-      svcT = setTimeout(function () {
-        svcImgs.forEach(function (m, k) {
-          if (k !== svcCur) m.classList.remove("prev");
-        });
-      }, 900);
-      svcItems.forEach(function (it, k) {
-        it.classList.toggle("on", k === i);
-        $(".svc-b", it).setAttribute("aria-expanded", k === i);
+  function setSelectedSize(size, label) {
+    selectedSize = { value: size, label: label };
+    $$(".size-choice", $("#productSizeChoices")).forEach(function (button) {
+      var selected = button.dataset.size === size;
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    $("#selectedSizeLabel").textContent = "Selected: " + label;
+    $("#productOptionsError").textContent = "";
+  }
+
+  function renderSizeReference(isShoes) {
+    var head = $("#sizeReferenceHead"),
+      body = $("#sizeReferenceBody"),
+      choices = $("#productSizeChoices");
+    head.replaceChildren();
+    body.replaceChildren();
+    choices.replaceChildren();
+
+    var headers = isShoes
+      ? ["PH size", "EU size", "Foot length"]
+      : ["Size", "Chest (cm)", "Waist (cm)", "Height (cm)"];
+    var headerRow = document.createElement("tr");
+    headers.forEach(function (label) {
+      var cell = document.createElement("th");
+      cell.scope = "col";
+      cell.textContent = label;
+      headerRow.appendChild(cell);
+    });
+    head.appendChild(headerRow);
+
+    var references = isShoes ? shoeSizeReference : uniformSizeReference;
+    references.forEach(function (reference) {
+      var label = isShoes
+        ? "PH " + reference.size + " (EU " + reference.eu + " · " + reference.length + ")"
+        : reference.label;
+      var choice = document.createElement("button");
+      choice.type = "button";
+      choice.className = "size-choice";
+      choice.dataset.size = reference.size;
+      choice.dataset.label = label;
+      choice.setAttribute("aria-pressed", "false");
+      choice.textContent = isShoes ? "PH " + reference.size : reference.label;
+      choice.addEventListener("click", function () {
+        setSelectedSize(choice.dataset.size, choice.dataset.label);
       });
-      svcGrid.style.setProperty("--svc", i);
+      choices.appendChild(choice);
+
+      var row = document.createElement("tr"),
+        sizeCell = document.createElement("td");
+      sizeCell.textContent = isShoes ? "PH " + reference.size : reference.label;
+      row.appendChild(sizeCell);
+      if (isShoes) {
+        var referenceCell = document.createElement("td"),
+          lengthCell = document.createElement("td");
+        referenceCell.textContent = "EU " + reference.eu;
+        lengthCell.textContent = reference.length;
+        row.appendChild(referenceCell);
+        row.appendChild(lengthCell);
+      } else {
+        ["chest", "waist", "height"].forEach(function (measurement) {
+          var measurementCell = document.createElement("td");
+          measurementCell.textContent = reference[measurement];
+          row.appendChild(measurementCell);
+        });
+      }
+      body.appendChild(row);
+    });
+    $("#uniformSizeNote").hidden = isShoes;
+  }
+
+  function showGalleryImage() {
+    var image = $("#productDetailImage"),
+      fallback = $("#productGalleryFallback"),
+      current = galleryImages[galleryIndex];
+    $("#galleryCaption").textContent = galleryIndex === 0 ? "Front view" : "Back view";
+    fallback.hidden = true;
+    image.hidden = false;
+    image.alt = activeProduct.name + " " + $("#galleryCaption").textContent.toLowerCase();
+    image.onerror = function () {
+      image.hidden = true;
+      fallback.hidden = false;
+      $("i", fallback).className =
+        "fa-solid fa-" + (activeProduct.type === "Shoes" ? "shoe-prints" : "shirt");
     };
-    svcItems.forEach(function (it, i) {
-      $(".svc-b", it).onclick = function () {
-        svcPick(i);
-      };
+    image.src = current || "";
+    if (!current) {
+      image.hidden = true;
+      fallback.hidden = false;
+    }
+    $$("[data-gallery-step]", $("#productOptions")).forEach(function (button) {
+      button.hidden = galleryImages.length < 2;
     });
   }
 
-  /* ---- Four checks: pinned title height, so the stacking cards sit right under it ---- */
-  var craftEl = $("#craft"),
-    craftHead = $(".craft-head");
-  function craftSync() {
-    if (craftEl && craftHead)
-      craftEl.style.setProperty("--ch", craftHead.offsetHeight + "px");
+  function openProductOptions(card) {
+    activeProduct = {
+      sku: card.dataset.sku,
+      name: card.dataset.name,
+      price: Number(card.dataset.price),
+      type: card.dataset.type,
+      material: card.dataset.material || "",
+    };
+    selectedSize = null;
+    galleryImages = [card.dataset.front, card.dataset.back].filter(Boolean);
+    galleryIndex = 0;
+    $("#productOptionsName").textContent = activeProduct.name;
+    $("#productDetailCategory").textContent =
+      $(".card-category", card).textContent;
+    $("#productDetailPrice").textContent = formatPrice(activeProduct.price);
+    $("#selectedSizeLabel").textContent = "Select one to continue";
+    $("#productQuantity").value = "1";
+    $("#productOptionsError").textContent = "";
+    $("#productMaterials").replaceChildren();
+    activeProduct.material.split(",").forEach(function (material) {
+      var text = material.trim();
+      if (!text) return;
+      var chip = document.createElement("span"),
+        icon = document.createElement("i");
+      chip.className = "material-chip";
+      icon.className = "fa-solid fa-leaf";
+      icon.setAttribute("aria-hidden", "true");
+      chip.appendChild(icon);
+      chip.appendChild(document.createTextNode(text));
+      $("#productMaterials").appendChild(chip);
+    });
+    renderSizeReference(activeProduct.type === "Shoes");
+    showGalleryImage();
+    openOverlay($("#productOptions"));
   }
-  craftSync();
-  addEventListener("resize", craftSync);
-  addEventListener("load", craftSync);
 
-  renderPrices();
+  window.openCartModal = function (button) {
+    var card = button && button.closest(".product-card");
+    if (card) openProductOptions(card);
+  };
+
+  $("#productOptionsForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var quantity = Number($("#productQuantity").value);
+    if (!activeProduct || !selectedSize) {
+      $("#productOptionsError").textContent = "Choose a size to continue.";
+      return;
+    }
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 999) {
+      $("#productOptionsError").textContent =
+        "Enter a whole-number quantity between 1 and 999.";
+      return;
+    }
+
+    var existing = cart.find(function (item) {
+      return item.sku === activeProduct.sku && item.size === selectedSize.value;
+    });
+    if (existing && existing.quantity + quantity > 999) {
+      $("#productOptionsError").textContent =
+        "A maximum of 999 units can be ordered per size.";
+      return;
+    }
+    if (existing) existing.quantity += quantity;
+    else {
+      cart.push({
+        sku: activeProduct.sku,
+        name: activeProduct.name,
+        price: activeProduct.price,
+        quantity: quantity,
+        size: selectedSize.value,
+        sizeLabel: selectedSize.label,
+      });
+    }
+    saveCart();
+    renderCart();
+    closeOverlays();
+    showToast(activeProduct.name + " added to your cart.");
+    activeProduct = null;
+  });
+
+  $$("[data-gallery-step]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (galleryImages.length < 2) return;
+      galleryIndex =
+        (galleryIndex + Number(button.dataset.galleryStep) + galleryImages.length) %
+        galleryImages.length;
+      showGalleryImage();
+    });
+  });
+
+  $$("[data-open]").forEach(function (button) {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+      setMenu(false);
+      var overlay = $("#" + button.dataset.open);
+      if (overlay) {
+        if (overlay.id === "quote" && cart.length) {
+          var message = $('textarea[name="msg"]', overlay);
+          if (message && !message.value.trim()) {
+            message.value = cart
+              .map(function (item) {
+                return (
+                  item.name +
+                  (item.size ? " (" + item.size + ")" : "") +
+                  " × " +
+                  item.quantity
+                );
+              })
+              .join("\n");
+          }
+        }
+        openOverlay(overlay);
+      }
+    });
+  });
+
+  $$("[data-close]").forEach(function (button) {
+    button.addEventListener("click", closeOverlays);
+  });
+  $$(".ov").forEach(function (overlay) {
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay) closeOverlays();
+    });
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeOverlays();
+      setMenu(false);
+    }
+  });
+
+  $("#q").addEventListener("input", function () {
+    var query = this.value.trim().toLowerCase(),
+      results = $("#sr");
+    results.replaceChildren();
+    if (!query) return;
+
+    var matches = $$(".product-card").filter(function (card) {
+      return (
+        card.dataset.name.toLowerCase().includes(query) ||
+        $(".card-category", card).textContent.toLowerCase().includes(query)
+      );
+    });
+    if (!matches.length) {
+      var empty = document.createElement("p");
+      empty.textContent = "No matching products found.";
+      results.appendChild(empty);
+      return;
+    }
+
+    matches.forEach(function (card) {
+      var row = document.createElement("div"),
+        name = document.createElement("b"),
+        price = document.createElement("span"),
+        add = document.createElement("button");
+      row.className = "search-result";
+      name.textContent = card.dataset.name;
+      price.textContent = formatPrice(Number(card.dataset.price));
+      add.type = "button";
+      add.className = "pill";
+      add.textContent = "Choose";
+      add.addEventListener("click", function () {
+        closeOverlays();
+        openProductOptions(card);
+      });
+      row.appendChild(name);
+      row.appendChild(price);
+      row.appendChild(add);
+      results.appendChild(row);
+    });
+  });
+
+  function showImageFallback(image) {
+    var wrap = image.closest(".card-image-wrap"),
+      card = image.closest(".product-card");
+    if (!wrap || !card) return;
+    var isShoes = card.dataset.type === "Shoes";
+    image.remove();
+    if ($("img", wrap)) return;
+    wrap.classList.add("image-unavailable");
+    var fallback = document.createElement("span"),
+      icon = document.createElement("i");
+    fallback.className = "image-fallback";
+    fallback.setAttribute("aria-hidden", "true");
+    icon.className =
+      "fa-solid fa-" + (isShoes ? "shoe-prints" : "shirt");
+    fallback.appendChild(icon);
+    wrap.appendChild(fallback);
+  }
+
+  $$(".product-card .card-image-wrap img").forEach(function (image) {
+    image.addEventListener("error", function () {
+      showImageFallback(image);
+    });
+    if (image.complete && image.naturalWidth === 0) showImageFallback(image);
+  });
+  $$(".product-card .card-desc").forEach(function (note) {
+    var icon = $("i", note);
+    note.replaceChildren(icon, document.createTextNode(" Stock confirmed at checkout"));
+  });
+
+  $("form.box", $("#quote")).addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!this.checkValidity()) {
+      this.reportValidity();
+      return;
+    }
+    showToast("The quote form is ready, but request delivery is not configured.");
+  });
+
+  $$("[data-tab]").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      setAccountMode(tab.dataset.tab === "up" ? "register" : "login");
+    });
+  });
+
+  $("#accountForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    if (!this.checkValidity()) {
+      this.reportValidity();
+      return;
+    }
+    var button = $("#acctGo"),
+      message = $("#accountMessage"),
+      formData = new FormData(this),
+      action = accountMode === "register" ? "register" : "login",
+      payload = {
+        csrf_token: csrfToken,
+        email: formData.get("email"),
+        password: formData.get("password"),
+      };
+    if (action === "register") payload.full_name = formData.get("full_name");
+    button.disabled = true;
+    message.textContent = "";
+    try {
+      var data = await requestJson("./api/auth.php?action=" + action, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      sessionUser = data.user;
+      csrfToken = data.csrf_token || "";
+      updateAccountUI();
+      this.reset();
+      setAccountMode("login");
+      if (pendingCheckout) {
+        pendingCheckout = false;
+        closeOverlays();
+        openCheckout();
+      } else {
+        closeOverlays();
+        showToast("You are signed in.");
+      }
+    } catch (error) {
+      message.textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("#logoutBtn").addEventListener("click", async function () {
+    var button = this;
+    button.disabled = true;
+    try {
+      await requestJson("./api/auth.php?action=logout", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ csrf_token: csrfToken }),
+      });
+      sessionUser = null;
+      csrfToken = "";
+      pendingCheckout = false;
+      updateAccountUI();
+      setAccountMode("login");
+      showToast("You are signed out.");
+    } catch (error) {
+      $("#accountMessage").textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("#checkoutForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    if (!sessionUser) {
+      beginCheckout();
+      return;
+    }
+    if (!this.checkValidity()) {
+      this.reportValidity();
+      return;
+    }
+    var button = $('button[type="submit"]', this),
+      formData = new FormData(this);
+    button.disabled = true;
+    $("#checkoutError").textContent = "";
+    try {
+      var data = await requestJson("./api/orders.php", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          csrf_token: csrfToken,
+          phone: formData.get("phone"),
+          address: formData.get("address"),
+          city: formData.get("city"),
+          postal_code: formData.get("postal_code"),
+          notes: formData.get("notes"),
+          currency: currency,
+          items: cart.map(function (item) {
+            return {
+              sku: item.sku,
+              size: item.size,
+              quantity: item.quantity,
+            };
+          }),
+        }),
+      });
+      cart = [];
+      saveCart();
+      renderCart();
+      closeOverlays();
+      showToast(
+        "Order " +
+          data.order_no +
+          " submitted. Delivery cost will be confirmed by CSSP.",
+      );
+    } catch (error) {
+      if (error.status === 401) {
+        sessionUser = null;
+        csrfToken = "";
+        updateAccountUI();
+        pendingCheckout = true;
+        setAccountMode("login");
+        $("#accountMessage").textContent =
+          "Your session expired. Log in again to continue checkout.";
+        openOverlay($("#account"));
+      } else {
+        $("#checkoutError").textContent = error.message;
+      }
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  var navProgress = $("#prog"),
+    topButton = $("#toTop");
+  function updateScrollState() {
+    var maxScroll = root.scrollHeight - window.innerHeight;
+    nav.classList.toggle("scrolled", window.scrollY > 10);
+    topButton.classList.toggle("show", window.scrollY > 500);
+    navProgress.style.width =
+      (maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0) + "%";
+    if (window.scrollY > 10) closeDropdowns();
+  }
+  window.addEventListener("scroll", updateScrollState, { passive: true });
+  window.addEventListener("resize", updateScrollState);
+  topButton.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  var fm = $("#fm"),
+    contactInfo = $("#finfo"),
+    contactDetails = {
+      call: ["Call us", "Mon to Sat, 8 AM to 6 PM", "+63 900 000 0000", "tel:+639000000000"],
+      msg: ["Email us", "We reply within one business day.", "hello@example.com", "mailto:hello@example.com"],
+    };
+  $("#fmMain").addEventListener("click", function () {
+    var open = !fm.classList.contains("open");
+    fm.classList.toggle("open", open);
+    this.setAttribute("aria-expanded", String(open));
+  });
+  $$(".fm-list [data-info]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (button.dataset.info === "share") {
+        var url = window.location.href.split("#")[0];
+        if (navigator.share) {
+          navigator.share({ title: document.title, url: url }).catch(function (error) {
+            if (error.name !== "AbortError") showToast("Unable to share this page.");
+          });
+        } else if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(url).then(
+            function () { showToast("Page link copied."); },
+            function () { showToast("Unable to copy the page link."); },
+          );
+        } else {
+          window.prompt("Copy this page link:", url);
+        }
+        return;
+      }
+      var info = contactDetails[button.dataset.info];
+      if (!info) return;
+      $("b", contactInfo).textContent = info[0];
+      $("span", contactInfo).textContent = info[1];
+      var link = $("a", contactInfo);
+      link.textContent = info[2];
+      link.href = info[3];
+      contactInfo.classList.add("show");
+    });
+  });
+  document.addEventListener("click", function (event) {
+    if (!event.target.closest(".dd")) closeDropdowns();
+    if (!event.target.closest("#menu,#burger")) setMenu(false);
+    if (!event.target.closest("#fm,#finfo")) {
+      fm.classList.remove("open");
+      $("#fmMain").setAttribute("aria-expanded", "false");
+      contactInfo.classList.remove("show");
+    }
+  });
+
+  renderCart();
+  updateScrollState();
+  refreshSession();
 })();

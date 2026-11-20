@@ -242,39 +242,75 @@
   });
 
   /* ---- Cart ---- */
-  var cart = [];
+  var cart = window.CSSPSiteState.getCart() || [];
+  function saveCart() {
+    if (!window.CSSPSiteState.setCart(cart)) {
+      toast("Your cart could not be saved in this browser.");
+    }
+  }
   function renderCart() {
     var n = 0,
-      t = 0;
-    $("#cartList").innerHTML = cart.length
-      ? cart
-          .map(function (i, x) {
-            n += i.q;
-            t += i.p * i.q;
-            return (
-              '<div class="ci"><b>' +
-              i.n +
-              " × " +
-              i.q +
-              "</b><span>" +
-              fmt(i.p * i.q) +
-              '</span><button data-rm="' +
-              x +
-              '" aria-label="Remove"><i class="fa-solid fa-trash"></i></button></div>'
-            );
-          })
-          .join("")
-      : "<p>Your cart is empty.</p>";
-    $("#cartCount").textContent = n;
+      t = 0,
+      list = $("#cartList");
+    list.replaceChildren();
+    if (cart.length === 0) {
+      list.textContent = "Your cart is empty.";
+    }
+    cart.forEach(function (item, index) {
+      n += item.quantity;
+      t += item.price * item.quantity;
+      var row = document.createElement("div"),
+        name = document.createElement("b"),
+        price = document.createElement("span"),
+        remove = document.createElement("button"),
+        icon = document.createElement("i");
+      row.className = "ci";
+      name.textContent =
+        item.name +
+        (item.sizeLabel ? " · " + item.sizeLabel : item.sku ? "" : " · Quote item") +
+        " × " +
+        item.quantity;
+      price.textContent = fmt(item.price * item.quantity);
+      remove.type = "button";
+      remove.dataset.rm = String(index);
+      remove.setAttribute("aria-label", "Remove " + item.name);
+      icon.className = "fa-solid fa-trash";
+      remove.appendChild(icon);
+      row.appendChild(name);
+      row.appendChild(price);
+      row.appendChild(remove);
+      list.appendChild(row);
+    });
+    $("#cartCount").textContent = String(n);
+    $("#cartCount").setAttribute(
+      "aria-label",
+      n + (n === 1 ? " item in cart" : " items in cart"),
+    );
     $("#cartTot").textContent = fmt(t);
   }
   function add(i) {
+    var product = P[i];
     var f = cart.find(function (c) {
-      return c.n === P[i][1];
+      return !c.sku && c.name === product[1];
     });
-    f ? f.q++ : cart.push({ n: P[i][1], p: P[i][2], q: 1 });
+    if (f && f.quantity >= 999) {
+      toast("A maximum of 999 units can be ordered per item.");
+      return;
+    }
+    if (f) f.quantity += 1;
+    else {
+      cart.push({
+        sku: "",
+        name: product[1],
+        price: product[2],
+        quantity: 1,
+        size: "",
+        sizeLabel: "",
+      });
+    }
+    saveCart();
     renderCart();
-    toast(P[i][1] + " added to cart");
+    toast(product[1] + " added to cart");
     var c = $("#cartCount");
     c.classList.remove("bump");
     void c.offsetWidth;
@@ -291,11 +327,17 @@
   }
   $("#cartList").onclick = function (e) {
     var b = e.target.closest("[data-rm]");
-    if (b) {
-      cart.splice(+b.dataset.rm, 1);
+    var index = b ? Number(b.dataset.rm) : -1;
+    if (Number.isInteger(index) && cart[index]) {
+      cart.splice(index, 1);
+      saveCart();
       renderCart();
     }
   };
+  window.CSSPSiteState.onCartChange(function (updatedCart) {
+    cart = updatedCart;
+    renderCart();
+  });
 
   /* ---- Product marquee. For real photos, add a path as the 6th value of an item, e.g. "assets/p1.jpg" ---- */
   var tiles = SLIDES.map(function (i) {
@@ -346,6 +388,21 @@
     if (o) {
       e.preventDefault();
       setMenu(false);
+      if (o.dataset.open === "quote" && cart.length) {
+        var message = $('textarea[name="msg"]', $("#quote"));
+        if (message && !message.value.trim()) {
+          message.value = cart
+            .map(function (item) {
+              return (
+                item.name +
+                (item.sizeLabel ? " (" + item.sizeLabel + ")" : "") +
+                " × " +
+                item.quantity
+              );
+            })
+            .join("\n");
+        }
+      }
       openOv($("#" + o.dataset.open));
     }
     if (e.target.closest("[data-close]") || e.target.classList.contains("ov"))

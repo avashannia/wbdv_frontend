@@ -712,6 +712,7 @@ section {
   top: 0;
   width: 100%;
   height: calc(100% + 20vh);
+  height: calc(100% + 20svh);
   overflow: hidden;
   background: var(--forest);
   clip-path: inset(58% 6% 20vh 6% round 32px);
@@ -1853,7 +1854,10 @@ footer {
 /* RESPONSIVE */
 @media (max-width: 991px) {
   :root {
-    --zoom: 1.2;
+    --zoom: 1.12;
+  }
+  .card video {
+    object-position: 55% 50%;
   }
   .burger,
   .only-m {
@@ -1948,7 +1952,11 @@ footer {
 }
 @media (max-width: 560px) {
   :root {
-    --zoom: 1.45;
+    --zoom: 1.04;
+  }
+  .card video {
+    object-position: 50% 50%;
+    transform-origin: 50% 50%;
   }
   .nav.scrolled {
     --ng: 10px;

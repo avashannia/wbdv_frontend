@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>CSSP Garments Trading</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="./js files/site_state.js?v=1"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="./Assets/logo-light-text.png">
@@ -370,6 +371,6 @@
   </div>
 
   <script src="js files/aboutus_script.js"></script>
-  <script src="js files/script.js"></script>
+  <script src="js files/script.js?v=4"></script>
 </body>
 </html>

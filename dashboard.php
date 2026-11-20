@@ -1,3 +1,25 @@
+<?php
+require_once __DIR__ . '/api/db.php';
+cssp_start_session();
+
+try {
+  $dashboardConnection = cssp_db();
+  $dashboardUser = cssp_current_user($dashboardConnection);
+} catch (PDOException $error) {
+  error_log('CSSP dashboard database error: ' . $error->getMessage());
+  http_response_code(503);
+  exit('The dashboard is unavailable. Check the database setup and try again.');
+}
+
+if (!$dashboardUser) {
+  header('Location: ./products.php?auth=required');
+  exit;
+}
+if (!in_array($dashboardUser['role'], array('owner', 'admin'), true)) {
+  http_response_code(403);
+  exit('Administrator access is required.');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +27,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>People &amp; Access | CSSP Garments Trading</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="./js files/site_state.js?v=1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="./css files/dashboard.css?v=1">
+  <link rel="stylesheet" href="./css files/dashboard.css?v=3">
 </head>
 <body>
 <div class="app">
@@ -23,10 +46,11 @@
       <button class="on" data-view="overview"><em>01</em>Overview</button>
       <button data-view="accounts"><em>02</em>User Accounts &amp; Logs</button>
       <button data-view="products"><em>03</em>Product Workspace</button>
+      <button data-view="orders"><em>04</em>Orders</button>
     </nav>
     <div class="side-foot">
-      <a href="new_index.php"><i class="fa-solid fa-arrow-left"></i>Back to shop</a>
-      <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+      <a href="./products.php"><i class="fa-solid fa-arrow-left"></i>Back to shop</a>
+      <button type="button" class="side-logout" id="dashboardLogout" data-csrf="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
     </div>
   </aside>
 
@@ -36,7 +60,7 @@
       <button class="ic menu-btn" id="menuBtn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
       <h1 id="topTitle">People &amp; Access</h1>
       <div class="top-r">
-        <span class="who">Signed in as <b>Owner</b></span>
+        <span class="who">Signed in as <b><?= htmlspecialchars($dashboardUser['full_name'], ENT_QUOTES, 'UTF-8') ?></b></span>
         <button class="ic" id="themeBtn" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
       </div>
     </header>
@@ -46,7 +70,7 @@
       <div class="head">
         <div>
           <p class="eyebrow">CSSP Garments Trading / People</p>
-          <h2>Welcome, Owner.</h2>
+          <h2>Welcome, <?= htmlspecialchars($dashboardUser['full_name'], ENT_QUOTES, 'UTF-8') ?>.</h2>
           <p class="sub">Manage account access and review recent sign-in activity.</p>
         </div>
         <span class="chip y">Administrator view</span>
@@ -108,6 +132,27 @@
       </div>
       <div class="card soon"><i class="fa-solid fa-shirt"></i><h3>Coming next</h3><p>This section is reserved for the product tables. We will connect it after the accounts side is done.</p></div>
     </section>
+
+    <!-- ORDERS -->
+    <section class="view" id="v-orders">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Sales</p>
+          <h2>Customer orders</h2>
+          <p class="sub">Orders placed by signed-in customers, including delivery details and selected sizes.</p>
+        </div>
+        <button class="btn dark" id="refreshOrders" type="button"><i class="fa-solid fa-rotate"></i> Refresh orders</button>
+      </div>
+      <p class="orders-status" id="ordersStatus" role="status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table class="orders-table" id="ordersTable">
+          <thead><tr><th>Order</th><th>Customer &amp; delivery</th><th>Items</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty" id="ordersEmpty" hidden><i class="fa-regular fa-folder-open"></i><p>No customer orders yet.</p></div>
+      </div>
+      <p class="note"><i class="fa-solid fa-circle-info"></i> Delivery charges are confirmed separately. Order status starts as pending.</p>
+    </section>
   </div>
 </div>
 
@@ -126,6 +171,6 @@
 </div>
 
 <div class="scrim" id="scrim"></div>
-<script src="./js files/dashboard.js?v=1"></script>
+<script src="./js files/dashboard.js?v=4"></script>
 </body>
 </html>

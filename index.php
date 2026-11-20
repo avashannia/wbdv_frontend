@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>CSSP Garments Trading</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="./js files/site_state.js?v=1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="./css files/style.css?v=3">
+  <link rel="stylesheet" href="./css files/style.css?v=5">
 </head>
     <body>
         <div class="prog" id="prog"></div>
@@ -81,7 +82,7 @@
                 <div class="card-wrap">
                 <div class="card">
                     <div class="hero-media">
-                    <video autoplay muted loop playsinline preload="auto">
+                    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
                         <source src="assets/bgvideo.mp4" type="video/mp4">
                     </video>
                     </div>
@@ -365,6 +366,6 @@
             <div class="sr" id="sr"></div>
             </div>
         </div>
-        <script src="./js files/script.js?v=3"></script>
+        <script src="./js files/script.js?v=4"></script>
     </body>
 </html>
