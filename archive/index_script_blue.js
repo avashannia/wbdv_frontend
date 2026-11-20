@@ -1,3 +1,4 @@
+/* CSSP script.js | vanilla JS, one section per feature */
 (function () {
   "use strict";
   var $ = function (s, c) {
@@ -163,24 +164,14 @@
   });
 
   /* ---- Scroll: navbar shrink, back-to-top, progress bar, scroll-fill statement ---- */
-  var fillParts = [];
-  Array.prototype.slice.call($("#fillText").childNodes).forEach(function (nd) {
-    if (nd.nodeType === 3)
-      nd.textContent
-        .split(/\s+/)
-        .filter(Boolean)
-        .forEach(function (w) {
-          fillParts.push('<span class="w">' + w + "</span>");
-        });
-    else if (nd.nodeType === 1) {
-      nd.classList.add("w"); /* image chips fade in with the words */
-      fillParts.push(nd.outerHTML);
-    }
-  });
-  $("#fillText").innerHTML = fillParts.join(" ");
+  var words = $("#fillText").textContent.trim().split(" ");
+  $("#fillText").innerHTML = words
+    .map(function (w) {
+      return '<span class="w">' + w + "</span>";
+    })
+    .join(" ");
   var spans = $$("#fillText .w"),
     fillEl = $("#fillText"),
-    fillIn = $(".fill-in"),
     sec = $(".fill");
   function onScroll() {
     var h = root.scrollHeight - innerHeight;
@@ -189,17 +180,13 @@
     $("#prog").style.width = (scrollY / h) * 100 + "%";
     /* statement: starts once the whole paragraph is on screen, first word first, and is fully lit with a short hold before it unpins */
     var r = sec.getBoundingClientRect(),
-      pin =
-        r.height -
-        parseFloat(getComputedStyle(sec).paddingBottom) -
-        fillIn.offsetHeight,
-      st = innerHeight * 0.7,
+      pin = r.height - parseFloat(getComputedStyle(sec).paddingBottom) - fillEl.offsetHeight,
+      st = innerHeight * 0.6,
       en = innerHeight * 0.26 - pin * 0.8,
       k = Math.min(Math.max((st - r.top) / (st - en), 0), 1);
     spans.forEach(function (s, i) {
       s.classList.toggle("on", i < Math.ceil(k * spans.length));
     });
-    fillIn.classList.toggle("done", k >= 0.98);
     closeDD();
   }
   addEventListener("scroll", onScroll, { passive: true });
@@ -538,9 +525,11 @@
   function doShare() {
     var u = location.href.split("#")[0];
     if (navigator.share) {
-      navigator.share({ title: document.title, url: u }).catch(function (err) {
-        if (!err || err.name !== "AbortError") copyLink(u);
-      });
+      navigator
+        .share({ title: document.title, url: u })
+        .catch(function (err) {
+          if (!err || err.name !== "AbortError") copyLink(u);
+        });
     } else copyLink(u);
   }
   $("a", fi).onclick = function (e) {
@@ -642,154 +631,6 @@
     io.observe(el);
   });
 
-  /* ---- Headlines: word-mask reveal ---- */
-  $$("h2").forEach(function (h) {
-    if (h.closest(".ov") || h.querySelector(".mw")) return;
-    var n = 0,
-      frag = document.createDocumentFragment();
-    h.setAttribute("aria-label", h.textContent.replace(/\s+/g, " ").trim());
-    Array.prototype.slice.call(h.childNodes).forEach(function (nd) {
-      if (nd.nodeType !== 3) return frag.appendChild(nd);
-      nd.textContent.split(/(\s+)/).forEach(function (w) {
-        if (!w) return;
-        if (/^\s+$/.test(w))
-          return frag.appendChild(document.createTextNode(" "));
-        var m = document.createElement("span"),
-          s = document.createElement("span");
-        m.className = "mw";
-        m.setAttribute("aria-hidden", "true");
-        s.textContent = w;
-        s.style.setProperty("--w", n++);
-        m.appendChild(s);
-        frag.appendChild(m);
-      });
-    });
-    h.textContent = "";
-    h.appendChild(frag);
-  });
-
-  /* ---- Hero: scroll-driven card transition ----
-     p = 0..1 over the pinned runway: card grows to full-bleed, copy swaps, video flies through,
-     then the next section slides over as a sheet (that part is plain scroll). */
-  (function () {
-    var runEl = $(".hero-run");
-    if (!runEl) return;
-    var card = $(".card"),
-      wrap = $(".card-wrap"),
-      bks = $$(".bk"),
-      hi = $(".hi"),
-      lines = $$(".hi .ln > span"),
-      hiRest = $$(".hi-sub,.hi-cta"),
-      expl = $(".explore"),
-      reduce = matchMedia("(prefers-reduced-motion: reduce)").matches,
-      vw,
-      vh,
-      sw,
-      st,
-      run,
-      small,
-      tgt = 0,
-      cur = 0,
-      raf = 0;
-    function clamp01(v) {
-      return Math.min(Math.max(v, 0), 1);
-    }
-    function seg(p, a, b) {
-      return clamp01((p - a) / (b - a));
-    }
-    function ease(t) {
-      return t < 0.5
-        ? 4 * t * t * t
-        : 1 - Math.pow(-2 * t + 2, 3) / 2; /* cubic-bezier(.65,0,.35,1) */
-    }
-    function render(p) {
-      var t = ease(seg(p, 0, 0.32)),
-        u = ease(seg(p, 0.3, 0.5)),
-        ex = ease(seg(p, 0, 0.2)),
-        z = seg(p, 0.3, 1),
-        c = ease(seg(p, 0.58, 1)),
-        side = ((vw - sw) / 2) * (1 - t),
-        tilt = small ? 0 : 1;
-      card.style.clipPath =
-        "inset(" +
-        (st * (1 - t)).toFixed(1) +
-        "px " +
-        side.toFixed(1) +
-        "px " +
-        (vh * 0.2 * t).toFixed(1) +
-        "px " +
-        side.toFixed(1) +
-        "px round " +
-        (32 * (1 - t) + 24 * c).toFixed(1) +
-        "px)";
-      wrap.style.transform =
-        "rotate(" +
-        (2.5 * tilt * (1 - t)).toFixed(2) +
-        "deg) scale(" +
-        (1 - 0.06 * c).toFixed(4) +
-        ")";
-      card.style.setProperty("--k", (1 + 0.15 * z + 0.12 * (1 - t)).toFixed(4));
-      card.style.setProperty("--dim", (0.35 * c).toFixed(3));
-      bks.forEach(function (b, i) {
-        b.style.transform =
-          "translate(" +
-          (-sw * (i ? 0.012 : 0.026) * (1 - t)).toFixed(1) +
-          "px," +
-          (t * vh * 0.55).toFixed(1) +
-          "px) rotate(" +
-          ((i ? -2.5 : -5) * tilt * (1 - t)).toFixed(2) +
-          "deg)";
-        b.style.opacity = (1 - seg(p, 0.04, 0.2)).toFixed(3);
-      });
-      lines.forEach(function (s) {
-        s.style.transform = "translateY(" + (-115 * ex).toFixed(1) + "%)";
-      });
-      hiRest.forEach(function (e) {
-        e.style.transform = "translateY(" + (-40 * ex).toFixed(1) + "px)";
-        e.style.opacity = (1 - ex).toFixed(3);
-      });
-      hi.style.visibility = ex >= 1 ? "hidden" : "visible";
-      expl.style.opacity = (
-        seg(p, 0.3, 0.42) *
-        (1 - seg(p, 0.52, 0.64))
-      ).toFixed(3);
-    }
-    function tick() {
-      cur += (tgt - cur) * 0.16;
-      if (Math.abs(tgt - cur) < 0.0005) cur = tgt;
-      render(cur);
-      raf = cur === tgt ? 0 : requestAnimationFrame(tick);
-    }
-    function kick() {
-      tgt = clamp01(scrollY / run);
-      if (!raf) raf = requestAnimationFrame(tick);
-    }
-    function geo() {
-      vw = innerWidth;
-      vh = innerHeight;
-      small = vw < 992;
-      sw = Math.min(vw * 0.88, 1240);
-      st = vh * 0.58;
-      run = Math.max(runEl.offsetHeight - vh, 1);
-      bks.forEach(function (b) {
-        b.style.left = (vw - sw) / 2 + "px";
-        b.style.top = st + "px";
-        b.style.width = sw + "px";
-        b.style.height = vh + "px";
-      });
-      if (reduce) {
-        render(0.5);
-      } else {
-        kick();
-        cur = tgt;
-        render(cur);
-      }
-    }
-    geo();
-    addEventListener("resize", geo);
-    if (!reduce) addEventListener("scroll", kick, { passive: true });
-  })();
-
   /* ---- What we do: click a service, the number rolls and the picture wipes in ---- */
   var svcGrid = $("#svcGrid");
   if (svcGrid) {
@@ -822,17 +663,6 @@
       };
     });
   }
-
-  /* ---- Four checks: pinned title height, so the stacking cards sit right under it ---- */
-  var craftEl = $("#craft"),
-    craftHead = $(".craft-head");
-  function craftSync() {
-    if (craftEl && craftHead)
-      craftEl.style.setProperty("--ch", craftHead.offsetHeight + "px");
-  }
-  craftSync();
-  addEventListener("resize", craftSync);
-  addEventListener("load", craftSync);
 
   renderPrices();
 })();
