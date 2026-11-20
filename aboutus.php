@@ -18,9 +18,36 @@
   <nav class="nav" id="nav" aria-label="Main">
     <a class="brand" href="./index.php#top" aria-label="CSSP home"><img src="./Assets/logo-light-text.png" alt="">CSSP</a>
     <ul class="menu" id="menu">
-      <li><a class="ddb" href="./index.php#top">Home</a></li>
-      <li><a class="ddb" href="./products.php">Products</a></li>
-      <li><a class="ddb" href="./aboutus.php" aria-current="page">About Us</a></li>
+      <li class="dd"><button class="ddb" aria-expanded="false">Products <i
+            class="fa-solid fa-chevron-down"></i></button>
+        <div class="panel mega">
+          <div class="col">
+            <h4>Uniforms</h4>
+            <div class="thumb"><i class="fa-solid fa-user-tie"></i></div>
+            <p>Maritime &amp; Culinary Uniforms</p><a class="pill" href="./products.php#uniforms">Gear Up</a>
+          </div>
+          <div class="col">
+            <h4>Safety Footwear</h4>
+            <div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div>
+            <p>Steel-toe Safety Shoe</p><a class="pill" href="./products.php#safety-footwears">Secure Step</a>
+          </div>
+        </div>
+      </li>
+      <li class="dd"><button class="ddb" aria-expanded="false">About Us <i
+            class="fa-solid fa-chevron-down"></i></button>
+        <div class="panel cols">
+          <div class="col">
+            <h4>Company</h4><a href="./aboutus.php"><i class="fa-solid fa-building"></i>About CSSP</a><a href="#overview"><i class="fa-solid fa-anchor"></i>Our Story</a><a href="#owner"><i
+                class="fa-solid fa-people-group"></i>Our Craft</a><a href="#locations"><i
+                class="fa-solid fa-house"></i>Location</a>
+          </div>
+          <div class="col">
+            <h4>Support</h4><a href="./index.php#support"><i class="fa-solid fa-circle-question"></i>FAQ</a><a href="./index.php#contact"><i
+                class="fa-solid fa-envelope"></i>Contact Us</a><a href="#site-footer"><i
+                class="fa-solid fa-file-lines"></i>Policies</a>
+          </div>
+        </div>
+      </li>
       <li class="only-m"><a class="ddb" href="./products.php?auth=login"><i class="fa-solid fa-circle-user"></i>&nbsp; Account</a></li>
       <li class="only-m"><button class="ddb" data-open="search"><span><i class="fa-solid fa-magnifying-glass"></i>&nbsp;
             Search</span></button></li>
@@ -230,9 +257,9 @@
       <div class="fbrand"><img src="Assets/logo-light-text.png" alt="CSSP logo">CSSP</div>
       <div>
         <h4>Navigation</h4>
-        <a href="./index.php#top">Home</a>
+        <a href="./index.php#story">Story</a>
+        <a href="./index.php#craft">Craft</a>
         <a href="./products.php">Products</a>
-        <a href="./aboutus.php">About Us</a>
       </div>
       <div>
         <h4>Connect</h4>
@@ -289,6 +316,7 @@
     <h3>Your cart</h3>
     <div id="cartList"></div>
     <div class="tot"><span>Total</span><span id="cartTot"></span></div>
+    <button class="pill" type="button" data-proceed-checkout>Proceed to checkout</button>
     <button class="pill" data-open="quote">Request a Quote</button>
     <button class="pill o" data-close style="margin-top:8px">Close</button>
   </aside>
@@ -327,6 +355,6 @@
   </div>
 
   <script src="js files/aboutus_script.js"></script>
-  <script src="js files/script.js?v=5"></script>
+  <script src="js files/script.js?v=6"></script>
 </body>
 </html>

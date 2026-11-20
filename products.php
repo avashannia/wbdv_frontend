@@ -28,9 +28,41 @@
             <nav class="nav" id="nav" aria-label="Main">
                 <a class="brand" href="./index.php#top" aria-label="CSSP home"><img src="assets/logo.png" alt="">CSSP</a>
                 <ul class="menu" id="menu">
-                    <li><a class="ddb" href="./index.php#top">Home</a></li>
-                    <li><a class="ddb" href="./products.php" aria-current="page">Products</a></li>
-                    <li><a class="ddb" href="./aboutus.php">About Us</a></li>
+                    <li class="dd">
+                        <button class="ddb" aria-expanded="false">Products <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="panel mega">
+                            <div class="col">
+                                <h4>Uniforms</h4>
+                                <div class="thumb"><i class="fa-solid fa-user-tie"></i></div>
+                                <p>Maritime &amp; Culinary Uniforms</p>
+                                <a class="pill" href="./products.php#uniforms">Gear Up</a>
+                            </div>
+                            <div class="col">
+                                <h4>Safety Footwear</h4>
+                                <div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div>
+                                <p>Steel-toe Safety Shoe</p>
+                                <a class="pill" href="./products.php#safety-footwears">Secure Step</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="dd">
+                        <button class="ddb" aria-expanded="false">About Us <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="panel cols">
+                            <div class="col">
+                                <h4>Company</h4>
+                                <a href="./aboutus.php"><i class="fa-solid fa-building"></i>About CSSP</a>
+                                <a href="./aboutus.php#overview"><i class="fa-solid fa-anchor"></i>Our Story</a>
+                                <a href="./aboutus.php#owner"><i class="fa-solid fa-people-group"></i>Our Craft</a>
+                                <a href="./aboutus.php#locations"><i class="fa-solid fa-house"></i>Location</a>
+                            </div>
+                            <div class="col">
+                                <h4>Support</h4>
+                                <a href="./index.php#support"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+                                <a href="./index.php#contact"><i class="fa-solid fa-envelope"></i>Contact Us</a>
+                                <a href="./index.php#site-footer"><i class="fa-solid fa-file-lines"></i>Policies</a>
+                            </div>
+                        </div>
+                    </li>
                     <li class="only-m"><button class="ddb" data-open="account"><span><i class="fa-solid fa-circle-user"></i>&nbsp; Account</span></button></li>
                     <li class="only-m"><button class="ddb" data-open="search"><span><i class="fa-solid fa-magnifying-glass"></i>&nbsp; Search</span></button></li>
                 </ul>
@@ -519,7 +551,7 @@
             <div class="fgrid">
                 <div class="fbrand"><img src="assets/logo.png" alt="CSSP logo">CSSP</div>
                 <div>
-                    <h4>Navigation</h4><a href="./index.php#top">Home</a><a href="./products.php">Products</a><a href="./aboutus.php">About Us</a>
+                    <h4>Navigation</h4><a href="./index.php#story">Story</a><a href="./index.php#craft">Craft</a><a href="./products.php#uniforms">Products</a>
                 </div>
                 <div>
                     <h4>Connect</h4><a href="#">Facebook</a><a href="#">Instagram</a><a href="#">LinkedIn</a>
@@ -753,7 +785,7 @@
 
         <div id="toastContainer"></div>
 
-        <script src="js files/products_script.js?v=14"></script>
+        <script src="js files/products_script.js?v=15"></script>
             
     </body>
 </html>

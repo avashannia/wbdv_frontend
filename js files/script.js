@@ -338,6 +338,17 @@
     cart = updatedCart;
     renderCart();
   });
+  $("[data-proceed-checkout]").addEventListener("click", function () {
+    if (!cart.length) {
+      toast("Add a product to your cart before checking out.");
+      return;
+    }
+    if (cart.some(function (item) { return !item.sku || !item.size; })) {
+      toast("Remove quote-only items from your cart before online checkout.");
+      return;
+    }
+    window.location.href = "./products.php?checkout=1";
+  });
 
   /* ---- Product marquee. For real photos, add a path as the 6th value of an item, e.g. "assets/p1.jpg" ---- */
   var tiles = SLIDES.map(function (i) {

@@ -1132,5 +1132,9 @@
 
   renderCart();
   updateScrollState();
-  refreshSession();
+  refreshSession().then(function () {
+    if (new URLSearchParams(window.location.search).get("checkout") === "1") {
+      beginCheckout();
+    }
+  });
 })();
