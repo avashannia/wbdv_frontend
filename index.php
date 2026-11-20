@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="./css files/new_index.css?v=3">
+  <link rel="stylesheet" href="./css files/style.css?v=3">
 </head>
     <body>
         <div class="prog" id="prog"></div>
@@ -365,6 +365,6 @@
             <div class="sr" id="sr"></div>
             </div>
         </div>
-        <script src="./js files/new_index.js?v=3"></script>
+        <script src="./js files/script.js?v=3"></script>
     </body>
 </html>
